@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.sfsu.io;
+package edu.sfsu.util.io;
 
 import java.io.FileInputStream;
 import java.io.IOException;
