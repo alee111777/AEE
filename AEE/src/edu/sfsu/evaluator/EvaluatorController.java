@@ -665,18 +665,18 @@ public class EvaluatorController
     }
 
     /**
-     * Request to add a label to the evaluatorModel.
+     * Request to add a entity type to the evaluatorModel.
      * <p/>
-     * @param label
+     * @param entityTypeName
      * @param color
      */
     public void requestEntityTypeAdd(
-            String label,
+            String entityTypeName,
             Color color)
     {
         try
         {
-            evaluatorModel.requestEntityTypeAdd(label, color);
+            evaluatorModel.requestEntityTypeAdd(entityTypeName, color);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -684,12 +684,12 @@ public class EvaluatorController
     }
 
     /**
-     * Request to add a label to the evaluatorModel with a random color.
+     * Request to add an entity type to the evaluator Model with a random color.
      * <p/>
-     * @param label
+     * @param entityTypeName
      */
-    public void requestLabelAdd(
-            String label)
+    public void requestEntityTypeAdd(
+            String entityTypeName)
     {
         try
         {
@@ -698,7 +698,7 @@ public class EvaluatorController
             float g = rand.nextFloat();
             float b = rand.nextFloat();
             Color randomColor = new Color(r, g, b);
-            evaluatorModel.requestEntityTypeAdd(label, randomColor);
+            evaluatorModel.requestEntityTypeAdd(entityTypeName, randomColor);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -706,18 +706,18 @@ public class EvaluatorController
     }
 
     /**
-     * Request to change the color of a label within the evaluatorModel.
+     * Request to change the color of a entity type within the evaluatorModel.
      * <p/>
-     * @param label
+     * @param entityTypeName
      * @param newColor
      */
-    public void requestLabelColorChange(
-            String label,
+    public void requestEntityTypeColorChange(
+            String entityTypeName,
             Color newColor)
     {
         try
         {
-            evaluatorModel.requestEntityTypeColorChange(label, newColor);
+            evaluatorModel.requestEntityTypeColorChange(entityTypeName, newColor);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -725,16 +725,16 @@ public class EvaluatorController
     }
 
     /**
-     * Request to delete a label from the evaluatorModel.
+     * Request to delete a entity type from the evaluatorModel.
      * <p/>
-     * @param label
+     * @param entityTypeName
      */
-    public void requestLabelDelete(
-            String label)
+    public void requestEntityTypeDelete(
+            String entityTypeName)
     {
         try
         {
-            evaluatorModel.requestEntityTypeDelete(label);
+            evaluatorModel.requestEntityTypeDelete(entityTypeName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -742,18 +742,19 @@ public class EvaluatorController
     }
 
     /**
-     * Request to rename a label from the evaluatorModel.
+     * Request to rename a entity type from the evaluatorModel.
      * <p/>
-     * @param oldLabel
-     * @param newLabel
+     * @param oldEntityTypeName
+     * @param newEntityTypeName
      */
     public void requestLabelRename(
-            String oldLabel,
-            String newLabel)
+            String oldEntityTypeName,
+            String newEntityTypeName)
     {
         try
         {
-            evaluatorModel.requestEntityTypeRename(oldLabel, newLabel);
+            evaluatorModel.requestEntityTypeRename(oldEntityTypeName,
+                                                   newEntityTypeName);
         } catch (Exception e)
         {
             showErrorMessage(e);

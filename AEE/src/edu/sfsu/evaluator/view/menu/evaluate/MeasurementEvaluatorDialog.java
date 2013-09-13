@@ -12,15 +12,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- *
- * @author eric
+ * Just a simple class to pick a document version. Launches the
+ * <code>MeasurementTableDialog</code> once that selection has been made.
+ * @author Eric Chiang
  */
 public class MeasurementEvaluatorDialog extends javax.swing.JDialog
 {
 
     private EvaluatorViewModel viewModel;
     private EvaluatorController controller;
-    private String docName = null;
+    private String nameOfSelectedDoc = null;
 
     /**
      * Creates new form MeasurementEvaluatorDialog
@@ -39,31 +40,35 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
 
     private void myInitComponents()
     {
+        // Populate docComboBox with document names
         ArrayList<String> docNames = viewModel.getAvailableDocuments();
         Collections.sort(docNames);
-        for (String docName
-                : docNames)
+        for (String docName : docNames)
         {
             docComboBox.addItem(docName);
         }
         docComboBox.repaint();
         populateVerComboBox();
-        this.docName = (String) docComboBox.getSelectedItem();
+        nameOfSelectedDoc = (String) docComboBox.getSelectedItem();
         docComboBox.addItemListener(new ItemListener()
         {
             @Override
             public void itemStateChanged(ItemEvent e)
             {
                 String newDocName = (String) docComboBox.getSelectedItem();
-                if (docName.compareTo(newDocName) != 0)
+                if (nameOfSelectedDoc.compareTo(newDocName) != 0)
                 {
-                    docName = newDocName;
+                    // Change value of verComboBox
+                    nameOfSelectedDoc = newDocName;
                     populateVerComboBox();
                 }
             }
         });
     }
 
+    /**
+     * As selected document is changed, the verComboBox must change with it.
+     */
     private void populateVerComboBox()
     {
         verComboBox.removeAllItems();
@@ -79,14 +84,18 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
             return;
         }
         Collections.sort(verNames);
-        for (String verName
-                : verNames)
+        for (String verName : verNames)
         {
             verComboBox.addItem(verName);
         }
         verComboBox.repaint();
     }
 
+    /**
+     * Display this dialog.
+     * @param viewModel
+     * @param controller
+     */
     public static void showMeasurementEvaluatorDialog(
             EvaluatorViewModel viewModel,
             EvaluatorController controller)
@@ -197,13 +206,14 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
     private void calculateButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_calculateButtonActionPerformed
     {//GEN-HEADEREND:event_calculateButtonActionPerformed
         String verName = (String) verComboBox.getSelectedItem();
-        if (docName == null || verName == null)
+        if (nameOfSelectedDoc == null || verName == null)
         {
             System.err.println("Null values...");
             return;
         }
+        // Launch the measurement table dialog
         MeasurementTableDialog.showMeasurementTableDialog(viewModel, controller,
-                                                          docName, verName);
+                                                          nameOfSelectedDoc, verName);
     }//GEN-LAST:event_calculateButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cancelButtonActionPerformed

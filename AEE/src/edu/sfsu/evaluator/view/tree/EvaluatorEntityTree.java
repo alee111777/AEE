@@ -686,7 +686,7 @@ public class EvaluatorEntityTree extends JTree implements EvaluatorView
                     {
                         return;
                     }
-                    controller.requestLabelColorChange(
+                    controller.requestEntityTypeColorChange(
                             annotationType, newColor);
                     viewModel.repaintView();
                 }
@@ -708,7 +708,7 @@ public class EvaluatorEntityTree extends JTree implements EvaluatorView
                             "Please Confirm", JOptionPane.WARNING_MESSAGE);
                     if (result == JOptionPane.OK_OPTION)
                     {
-                        controller.requestLabelDelete(annotationType);
+                        controller.requestEntityTypeDelete(annotationType);
                         viewModel.repaintView();
                     }
                 }

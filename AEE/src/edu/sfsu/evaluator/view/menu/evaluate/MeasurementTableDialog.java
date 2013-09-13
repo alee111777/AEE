@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 /**
- *
- * @author eric
+ * Measurement Table Dialog
+ * @author Eric Chiang
  */
 public class MeasurementTableDialog extends JDialog
 {
@@ -32,6 +32,7 @@ public class MeasurementTableDialog extends JDialog
         Container pane = this.getContentPane();
         pane.setLayout(new GridBagLayout());
         MeasurementTable mt;
+        // Generate measurement table
         try
         {
             mt = new MeasurementTable(viewModel, docName, verName);
@@ -41,8 +42,8 @@ public class MeasurementTableDialog extends JDialog
             return;
         }
 
+        // Add info labels
         JLabel infoLabel = new JLabel();
-
         infoLabel.setText(String.format("Measurements for document: '%s'",
                                         docName));
 
@@ -72,9 +73,10 @@ public class MeasurementTableDialog extends JDialog
 
     }
 
-    public static void showMeasurementTableDialog(EvaluatorViewModel viewModel,
-                                                  EvaluatorController controller,
-                                                  String docName, String verName)
+    public static void showMeasurementTableDialog(
+            EvaluatorViewModel viewModel,
+            EvaluatorController controller,
+            String docName, String verName)
     {
         MeasurementTableDialog tDialog =
                 new MeasurementTableDialog(viewModel, controller, docName,

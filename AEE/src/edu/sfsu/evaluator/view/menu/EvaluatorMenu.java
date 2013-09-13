@@ -9,7 +9,7 @@ import edu.sfsu.evaluator.EvaluatorViewModel;
 import edu.sfsu.evaluator.view.importer.ImportDialogSWING;
 import edu.sfsu.evaluator.view.menu.add.AddEntityTypeDialog;
 import edu.sfsu.evaluator.view.menu.add.CreateComplexEntityRuleDialog;
-import edu.sfsu.evaluator.view.menu.evaluate.LabelEvaluator;
+import edu.sfsu.evaluator.view.menu.evaluate.EntityTypeEvaluator;
 import edu.sfsu.evaluator.view.menu.evaluate.MeasurementEvaluatorDialog;
 import edu.sfsu.evaluator.view.menu.multiedit.MultiEditorDialog;
 import java.awt.event.ActionEvent;
@@ -493,7 +493,7 @@ public class EvaluatorMenu extends JMenuBar
             return;
         }
         // Display label evaluator dialog
-        LabelEvaluator.showLabelEvaluator(viewModel, controller);
+        EntityTypeEvaluator.showLabelEvaluator(viewModel, controller);
     }
 
     /**

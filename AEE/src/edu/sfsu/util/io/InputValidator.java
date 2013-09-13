@@ -19,8 +19,8 @@ public class InputValidator
 
     /**
      * Ensures that user input is only alpha numeric, has no leading or trailing
-     * space, contains at least one character, and only has no sequences of
-     * spaces longer than one.
+     * space, contains at least one character, and has no sequences of spaces
+     * longer than one.
      * @param userInput
      * @return
      */

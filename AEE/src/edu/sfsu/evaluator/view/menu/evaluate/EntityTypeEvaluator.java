@@ -21,16 +21,16 @@ import javax.swing.table.TableRowSorter;
  *
  * @author eric
  */
-public class LabelEvaluator extends javax.swing.JDialog
+public class EntityTypeEvaluator extends javax.swing.JDialog
 {
 
     private EvaluatorViewModel viewModel;
     private EvaluatorController controller;
 
     /**
-     * Creates new form LabelEvaluator
+     * Creates new form EntityTypeEvaluator
      */
-    public LabelEvaluator(
+    public EntityTypeEvaluator(
             EvaluatorViewModel viewModel,
             EvaluatorController controller)
     {
@@ -45,37 +45,32 @@ public class LabelEvaluator extends javax.swing.JDialog
 
         ArrayList<String> docNames = viewModel.getAvailableDocuments();
         Collections.sort(docNames);
-        for (String docName
-                : docNames)
+        for (String docName : docNames)
         {
             docComboBox.addItem(docName);
         }
     }
 
-    private void populateLabelInfo(String docName) throws Exception
+    private void populateEntityTypeInfoTable(String docName) throws Exception
     {
         ArrayList<String> verNames =
                 viewModel.getAvailableDocumentVersions(docName);
-        labelTabbedPane.removeAll();
+        entityTypeTabbedPane.removeAll();
         ArrayList<String> labels =
                 new ArrayList(viewModel.getEntityTypes().keySet());
         Collections.sort(labels);
-        for (String label
-                : labels)
+        for (String label : labels)
         {
             HashMap<String, ArrayList<Integer>> annoFreq = new HashMap();
             String[] columnNames = new String[verNames.size() + 1];
             columnNames[0] = "Text";
-            for (int i = 0;
-                    i < verNames.size();
-                    i++)
+            for (int i = 0; i < verNames.size(); i++)
             {
                 String verName = verNames.get(i);
                 columnNames[i + 1] = verName;
                 ArrayList<Entity> annos =
                         viewModel.getEntities(docName, verName);
-                for (Entity a
-                        : annos)
+                for (Entity a : annos)
                 {
                     if (a.getEntityType().compareTo(label) != 0)
                     {
@@ -85,9 +80,7 @@ public class LabelEvaluator extends javax.swing.JDialog
                     if (verFreq == null)
                     {
                         verFreq = new ArrayList();
-                        for (int j = 0;
-                                j < verNames.size();
-                                j++)
+                        for (int j = 0; j < verNames.size(); j++)
                         {
                             if (j == i)
                             {
@@ -141,8 +134,8 @@ public class LabelEvaluator extends javax.swing.JDialog
             TableRowSorter<TableModel> sorter = new TableRowSorter(jtable.
                     getModel());
             jtable.setRowSorter(sorter);
-            labelTabbedPane.add(label, new JScrollPane(jtable));
-            labelTabbedPane.repaint();
+            entityTypeTabbedPane.add(label, new JScrollPane(jtable));
+            entityTypeTabbedPane.repaint();
         }
 
     }
@@ -150,8 +143,8 @@ public class LabelEvaluator extends javax.swing.JDialog
     public static void showLabelEvaluator(EvaluatorViewModel viewModel,
                                           EvaluatorController controller)
     {
-        LabelEvaluator labelEvaluator =
-                new LabelEvaluator(viewModel, controller);
+        EntityTypeEvaluator labelEvaluator =
+                new EntityTypeEvaluator(viewModel, controller);
         labelEvaluator.setVisible(true);
     }
 
@@ -166,7 +159,7 @@ public class LabelEvaluator extends javax.swing.JDialog
     {
 
         docComboBox = new javax.swing.JComboBox();
-        labelTabbedPane = new javax.swing.JTabbedPane();
+        entityTypeTabbedPane = new javax.swing.JTabbedPane();
         calculateButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
@@ -197,7 +190,7 @@ public class LabelEvaluator extends javax.swing.JDialog
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelTabbedPane)
+                    .addComponent(entityTypeTabbedPane)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(docComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -210,7 +203,7 @@ public class LabelEvaluator extends javax.swing.JDialog
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(labelTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
+                .addComponent(entityTypeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                 .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(docComboBox)
@@ -231,7 +224,7 @@ public class LabelEvaluator extends javax.swing.JDialog
         }
         try
         {
-            populateLabelInfo(docName);
+            populateEntityTypeInfoTable(docName);
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -246,7 +239,7 @@ public class LabelEvaluator extends javax.swing.JDialog
     private javax.swing.JButton calculateButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox docComboBox;
-    private javax.swing.JTabbedPane labelTabbedPane;
+    private javax.swing.JTabbedPane entityTypeTabbedPane;
     // End of variables declaration//GEN-END:variables
 
     private void HashMap()

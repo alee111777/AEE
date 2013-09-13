@@ -8,6 +8,7 @@ import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
 import edu.sfsu.evaluator.model.ComplexEntityRule;
 import edu.sfsu.evaluator.model.ComplexEntityRuleNode;
+import edu.sfsu.util.io.InputValidator;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Create complex entity rule dialog.
  * @author eric
  */
 public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
@@ -28,20 +29,6 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
     private static final String AND = "AND";
     private static final String OR = "OR";
     private Color color;
-    private static final ArrayList<Character> WHITELIST;
-
-    static
-    {
-        WHITELIST = new ArrayList();
-        char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
-                toCharArray();
-        for (int i = 0;
-                i < alpha.length;
-                i++)
-        {
-            WHITELIST.add(alpha[i]);
-        }
-    }
 
     /**
      * Creates new form ComplexEntityRuleAddDialog
@@ -76,7 +63,7 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
         complexEntityRuleTextField = new javax.swing.JTextField();
         addButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
-        annotationComboBox = new javax.swing.JComboBox();
+        entityTypeComboBox = new javax.swing.JComboBox();
         nameTextField = new javax.swing.JTextField();
         nameInfoLabel = new javax.swing.JLabel();
         andOrComboBox = new javax.swing.JComboBox();
@@ -161,7 +148,7 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(annotationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(entityTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(andOrComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addGap(18, 18, 18)
@@ -181,7 +168,7 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addButton)
-                    .addComponent(annotationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(entityTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(andOrComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -201,19 +188,6 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private static boolean validateInput(String input)
-    {
-        for (int i = 0;
-                i < input.length();
-                i++)
-        {
-            if (WHITELIST.contains((Character) input.charAt(i)))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Add Complex Entity Rule Node
@@ -225,7 +199,7 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
         /* Add entity rule node to rule nodes */
         String andOr = (String) andOrComboBox.getSelectedItem();
         boolean optional = (andOr.compareTo(OR) == 0);
-        String annotationType = (String) annotationComboBox.getSelectedItem();
+        String annotationType = (String) entityTypeComboBox.getSelectedItem();
         if (annotationType == null)
         {
             return;
@@ -257,7 +231,9 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
      */
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_createButtonActionPerformed
     {//GEN-HEADEREND:event_createButtonActionPerformed
-        String name = nameTextField.getText();
+        // Attempt to create complex entity rule
+        String complexEntityTypeName = nameTextField.getText();
+        // If no rules have been added, show error
         if (ruleNodes.isEmpty())
         {
             JOptionPane.showMessageDialog(this, "No rules specified",
@@ -265,41 +241,47 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
+        // If less tha two rules have been added, show error
         if (ruleNodes.size() < 2)
         {
             JOptionPane.showMessageDialog(this,
-                                          "Complex entity must be contain more than one entity",
+                                          "Complex entity must be contain more"
+                                           + " than one entity",
                                           "Rule Error",
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (!validateInput(name))
+        // If user input is not valid, show error
+        if (!InputValidator.isValidUserInput(complexEntityTypeName))
         {
             JOptionPane.showMessageDialog(this, "Invalid name",
                                           "Naming Error",
                                           JOptionPane.ERROR_MESSAGE);
             return;
         }
+        // Check that a complex entity with a similar name doesn't exists
         ArrayList<ComplexEntityRule> complexEntityRules =
                 viewModel.getComplexEntityRules();
-        for (int i = 0;
-                i < complexEntityRules.size();
-                i++)
+        for (int i = 0; i < complexEntityRules.size(); i++)
         {
             ComplexEntityRule entityRule = complexEntityRules.get(i);
-            if (entityRule.getComplexEntityType().compareTo(name) == 0)
+            if (entityRule.getComplexEntityType().
+                    compareTo(complexEntityTypeName) == 0)
             {
                 String message =
                         String.format(
-                        "Already a complex entity rule named %s", name);
+                        "Already a complex entity rule named %s",
+                        complexEntityTypeName);
                 JOptionPane.showMessageDialog(this, message,
                                               "Naming Error",
                                               JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
-        ComplexEntityRule entityRule = new ComplexEntityRule(name, ruleNodes,
-                                                             color);
+
+        // Create new complex entity
+        ComplexEntityRule entityRule =
+                new ComplexEntityRule(complexEntityTypeName, ruleNodes, color);
         controller.requestComplexEntityRuleAdd(entityRule);
         viewModel.repaintView();
         this.dispose();
@@ -330,13 +312,12 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
      */
     private void myInitComponents()
     {
-        ArrayList<String> annotationTypes =
+        ArrayList<String> namesOfEntityTypes =
                 new ArrayList(viewModel.getEntityTypes().keySet());
-        Collections.sort(annotationTypes);
-        for (String annotationType
-                : annotationTypes)
+        Collections.sort(namesOfEntityTypes);
+        for (String entityTypeName : namesOfEntityTypes)
         {
-            annotationComboBox.addItem(annotationType);
+            entityTypeComboBox.addItem(entityTypeName);
         }
 
         andOrComboBox.addItem(AND);
@@ -345,13 +326,13 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
     }
 
     /**
-     * Populate text field.
+     * As rule nodes are added or deleted, the text field changes to reflect
+     * those changes.
      */
     private void populateComplexEntityRuleTextField()
     {
         String ruleString = "";
-        for (ComplexEntityRuleNode ruleNode
-                : ruleNodes)
+        for (ComplexEntityRuleNode ruleNode : ruleNodes)
         {
             if (ruleNode.isOptional())
             {
@@ -385,11 +366,11 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JComboBox andOrComboBox;
-    private javax.swing.JComboBox annotationComboBox;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField complexEntityRuleTextField;
     private javax.swing.JButton createButton;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JComboBox entityTypeComboBox;
     private javax.swing.JButton helpButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JColorChooser jColorChooser1;
