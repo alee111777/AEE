@@ -150,7 +150,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
         } else
         {
             ComplexEntity complexEntity =
-                    new ComplexEntity(complexEntityRule.getEntityRuleName(),
+                    new ComplexEntity(complexEntityRule.getComplexEntityType(),
                                       complexEntityAnnotations);
             controller.requestComplexEntityAdd(docName, verName,
                                                complexEntity);
@@ -177,7 +177,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
             this.verName = verName;
             docLoaded = true;
             caret.setDot(0);
-            paintAnnotations();
+            paintEntities();
         } catch (Exception e)
         {
             String message =
@@ -231,7 +231,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
         complexEntityAnnotations.add(start);
         validNextTypes.clear();
         ArrayList<ComplexEntityRuleNode> ruleNodes =
-                complexEntityRule.getNodes();
+                complexEntityRule.getRuleNodes();
         for (int i = nextIndex;
                 i < ruleNodes.size();
                 i++)
@@ -259,7 +259,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
     private void extendComplexEntity(Entity a)
     {
         ArrayList<ComplexEntityRuleNode> ruleNodes =
-                complexEntityRule.getNodes();
+                complexEntityRule.getRuleNodes();
         for (int i = nextIndex;
                 i < ruleNodes.size();
                 i++)
@@ -306,7 +306,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
     private JPopupMenu generateAnnoPopup(final String text, int start, int end)
     {
         JPopupMenu annoPopup = new JPopupMenu();
-        HashMap<String, Color> labels = viewModel.getLabels();
+        HashMap<String, Color> labels = viewModel.getEntityTypes();
         for (final String label
                 : labels.keySet())
         {
@@ -382,7 +382,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
                     : entityRules)
             {
                 ArrayList<ComplexEntityRuleNode> ruleNodes =
-                        entityRule.getNodes();
+                        entityRule.getRuleNodes();
                 for (int i = 0;
                         i < ruleNodes.size();
                         i++)
@@ -393,7 +393,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
                     {
                         String message = String.format(
                                 "Create [%s]: '%s -> %s'",
-                                entityRule.getEntityRuleName(), annotation.getText(),
+                                entityRule.getComplexEntityType(), annotation.getText(),
                                 annotation.getEntityType());
                         JMenuItem menuItem = new JMenuItem(message);
                         final int index = i;
@@ -602,8 +602,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
                 }
             }
 
-            ArrayList<ComplexEntityRuleNode> ruleNodes = complexEntityRule.
-                    getNodes();
+            ArrayList<ComplexEntityRuleNode> ruleNodes = complexEntityRule.getRuleNodes();
 
             /* If annotations is empty find out if the rest of the complex
              * entity rules are optional */
@@ -725,7 +724,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
         }
     }
 
-    private void paintAnnotations()
+    private void paintEntities()
     {
         ArrayList<Entity> annotations;
         try
@@ -744,7 +743,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
          {
          for (String annoType : validNextTypes)
          {
-         if (a.getEntityType().compareTo(annoType) == 0)
+         if (a.getComplexEntityType().compareTo(annoType) == 0)
          {
          validNextAnnotations.add(a);
          break;
@@ -759,7 +758,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
          validNextAnnotations.add(a);
          }
          }
-         paintAnnotations(validNextAnnotations);
+         paintEntities(validNextAnnotations);
 
          } else
          */
@@ -785,7 +784,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
     {
 
         Collections.sort(annotations, Entity.AnnotationComparator);
-        HashMap<String, Color> labels = viewModel.getLabels();
+        HashMap<String, Color> labels = viewModel.getEntityTypes();
 
 
         doc.setCharacterAttributes(0, doc.getLength(), new SimpleAttributeSet(),
@@ -847,8 +846,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
             for (ComplexEntity complexEntity
                     : complexEntities)
             {
-                if (viewModel.isComplexEntityRuleHighlighted(complexEntity.
-                        getEntityType()))
+                if (viewModel.isComplexEntityTypeHighlighted(complexEntity.getComplexEntityType()))
                 {
                     paintComplexEntity(g, complexEntity);
                 }
@@ -869,8 +867,8 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
         for (ComplexEntityRule entityRule
                 : entityRules)
         {
-            if (complexEntity.getEntityType()
-                    .compareTo(entityRule.getEntityRuleName()) == 0)
+            if (complexEntity.getComplexEntityType()
+                    .compareTo(entityRule.getComplexEntityType()) == 0)
             {
                 color = entityRule.getColor();
                 break;
@@ -880,7 +878,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
         {
             g.setColor(color);
         }
-        ArrayList<Entity> annotations = complexEntity.getEntities();
+        ArrayList<Entity> annotations = complexEntity.getSubEntities();
         int x1, y1, x2, y2;
         for (int i = 0;
                 i < annotations.size() - 1;
@@ -943,7 +941,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
             if (complexEntityAnnotations.size() > 1)
             {
                 paintComplexEntity(g, new ComplexEntity(
-                        complexEntityRule.getEntityRuleName(),
+                        complexEntityRule.getComplexEntityType(),
                         complexEntityAnnotations));
 
             }
@@ -972,7 +970,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
     @Override
     public void paint(Graphics g)
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
             return;
         }
@@ -1019,7 +1017,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
     public void repaintView()
     {
         // Check if workspace set
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
             return;
         }
@@ -1038,7 +1036,7 @@ public class EvaluatorTextScreen extends JTextPane implements EvaluatorView
         }
 
         // If all checks out paint everything!
-        paintAnnotations();
+        paintEntities();
 
     }
 

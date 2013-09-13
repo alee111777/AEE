@@ -280,7 +280,7 @@ public class MultiEditorDialog extends JDialog
 
         JMenu highlightMenu = new JMenu("Highlight");
         ArrayList<String> labels =
-                new ArrayList(viewModel.getLabels().keySet());
+                new ArrayList(viewModel.getEntityTypes().keySet());
         Collections.sort(labels);
         for (final String label
                 : labels)

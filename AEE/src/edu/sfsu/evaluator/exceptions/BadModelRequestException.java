@@ -5,7 +5,9 @@
 package edu.sfsu.evaluator.exceptions;
 
 /**
- *
+ * Exception thrown when a request is made of the model which is invalid.
+ * Largely thrown when a document version does not exist which is being
+ * requested.
  * @author eric
  */
 public class BadModelRequestException extends Exception

@@ -9,22 +9,32 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
- *
- * @author eric
+ * Rule for creating a complex entity. Each node contains an entity type and
+ * a boolean value for if that entity is optional. And example list of ruleNodes
+ * would be:
+ * <p/>
+ * "first complexEntityType" not optional<p/>
+ * "middle complexEntityType" optional<p/>
+ * "last complexEntityType" not optional<p/>
+ * <p/>
+ * For this case the complexEntityType would be something like "name".
+ * <p/>
+ * @author Eric Chiang
  */
 public class ComplexEntityRule implements java.io.Serializable,
                                           Comparable<ComplexEntityRule>
 {
 
-    private String name;
-    private ArrayList<ComplexEntityRuleNode> nodes;
+    private String complexEntityType;
+    private ArrayList<ComplexEntityRuleNode> ruleNodes;
     private Color color;
 
-    public ComplexEntityRule(String name,
-                             ArrayList<ComplexEntityRuleNode> nodes, Color color)
+    public ComplexEntityRule(String complexEntityType,
+                             ArrayList<ComplexEntityRuleNode> ruleNodes,
+                             Color color)
     {
-        this.name = name;
-        this.nodes = new ArrayList(nodes);
+        this.complexEntityType = complexEntityType;
+        this.ruleNodes = new ArrayList(ruleNodes);
         this.color = color;
     }
 
@@ -33,19 +43,14 @@ public class ComplexEntityRule implements java.io.Serializable,
         return color;
     }
 
-    public String getEntityRuleName()
+    public String getComplexEntityType()
     {
-        return name;
+        return complexEntityType;
     }
 
-    public ArrayList<ComplexEntityRuleNode> getNodes()
+    public ArrayList<ComplexEntityRuleNode> getRuleNodes()
     {
-        return new ArrayList(nodes);
-    }
-
-    public void setColor(Color color)
-    {
-        this.color = color;
+        return new ArrayList(ruleNodes);
     }
 
     @Override
@@ -56,13 +61,13 @@ public class ComplexEntityRule implements java.io.Serializable,
             return false;
         }
         ComplexEntityRule cer = (ComplexEntityRule) o;
-        return name.compareTo(cer.getEntityRuleName()) == 0;
+        return complexEntityType.compareTo(cer.getComplexEntityType()) == 0;
     }
 
     @Override
     public int compareTo(ComplexEntityRule o)
     {
-        return name.compareTo(o.getEntityRuleName());
+        return complexEntityType.compareTo(o.getComplexEntityType());
     }
     public static Comparator<ComplexEntityRule> ComplexEntityRuleComparator = new Comparator<ComplexEntityRule>()
     {

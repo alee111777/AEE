@@ -8,44 +8,59 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
- *
- * @author eric
+ * A complex entity contains a complex entity type and list of sub entities
+ * (order matters).
+ * @author Eric Chiang
  */
 public class ComplexEntity implements java.io.Serializable,
                                       Comparable<ComplexEntity>
 {
 
-    private String complexEntityRuleType;
-    private ArrayList<Entity> entities;
+    private String complexEntityType;
+    private ArrayList<Entity> subEntities;
 
-    public ComplexEntity(String type, ArrayList<Entity> entities)
+    public ComplexEntity(String type, ArrayList<Entity> subEntities)
     {
-        this.complexEntityRuleType = type;
-        this.entities = new ArrayList(entities);
+        this.complexEntityType = type;
+        this.subEntities = new ArrayList(subEntities);
     }
 
-    public ArrayList<Entity> getEntities()
+    /**
+     * Get sub entities.
+     * @return
+     */
+    public ArrayList<Entity> getSubEntities()
     {
-        return new ArrayList(entities);
+        // Create a new ArrayList which contains the subEntities.
+        return new ArrayList(subEntities);
     }
 
-    public String getEntityType()
+    /**
+     * Get complex entity type.
+     * @return
+     */
+    public String getComplexEntityType()
     {
-        return complexEntityRuleType;
+        return complexEntityType;
     }
 
     @Override
     public String toString()
     {
-        String string = complexEntityRuleType;
-        for (Entity a
-                : entities)
+        String string = complexEntityType;
+        for (Entity a : subEntities)
         {
             string += '\n' + a.toString();
         }
         return string;
     }
 
+    /**
+     * Complex entities are equivalent if their data fields are equal.
+     * Essentially tests for weak equivalence.
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o)
     {
@@ -54,20 +69,21 @@ public class ComplexEntity implements java.io.Serializable,
             return false;
         }
         ComplexEntity r = (ComplexEntity) o;
-        if (r.getEntityType().compareTo(complexEntityRuleType) != 0)
+        // Check if complex entity type is the same.
+        if (r.getComplexEntityType().compareTo(complexEntityType) != 0)
         {
             return false;
         }
-        ArrayList<Entity> rAnnos = r.getEntities();
-        if (rAnnos.size() != entities.size())
+
+        ArrayList<Entity> rAnnos = r.getSubEntities();
+        // Check if sub entities match up
+        if (rAnnos.size() != subEntities.size())
         {
             return false;
         }
-        for (int i = 0;
-                i < entities.size();
-                i++)
+        for (int i = 0; i < subEntities.size(); i++)
         {
-            if (!rAnnos.get(i).equals(entities.get(i)))
+            if (!rAnnos.get(i).equals(subEntities.get(i)))
             {
                 return false;
             }
@@ -75,29 +91,35 @@ public class ComplexEntity implements java.io.Serializable,
         return true;
     }
 
+    /**
+     * compareTo only compares the subEntities of both complex entities.
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(ComplexEntity o)
     {
-        ArrayList<Entity> oAnnos = o.getEntities();
-        for (int i = 0;
-                i < entities.size();
-                i++)
+        ArrayList<Entity> oSubEntities = o.getSubEntities();
+        for (int i = 0; i < subEntities.size(); i++)
         {
-            if (i >= oAnnos.size())
+            // If this complex entity has more nodes than the other return 1
+            if (i >= oSubEntities.size())
             {
                 return 1;
             }
-            Entity a1 = entities.get(i);
-            Entity a2 = oAnnos.get(i);
-            int result = a1.getStart() - a2.getStart();
-            if (result == 0)
-            {
-                result = a1.getEnd() - a2.getEnd();
-            }
+            // Compare each sub entity util a difference is found.
+            Entity a1 = subEntities.get(i);
+            Entity a2 = oSubEntities.get(i);
+            int result = a1.compareTo(a2);
             if (result != 0)
             {
                 return result;
             }
+        }
+        // All sub entities have been the same up until this point
+        if (subEntities.size() == oSubEntities.size())
+        {
+            return complexEntityType.compareTo(o.complexEntityType);
         }
         return -1;
     }

@@ -24,7 +24,7 @@ public class MeasurementTable extends JTable
     {
         super();
         ArrayList<String> labelNames =
-                new ArrayList(viewModel.getLabels().keySet());
+                new ArrayList(viewModel.getEntityTypes().keySet());
         ArrayList<String> verNames =
                 new ArrayList(viewModel.getAvailableDocumentVersions(docName));
         ArrayList<Entity> truthAnnos =

@@ -35,7 +35,7 @@
                   <Group type="102" attributes="0">
                       <Component id="infoLabel" min="-2" pref="131" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationTypeField" max="32767" attributes="0"/>
+                      <Component id="entityTypeNameTextField" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -56,7 +56,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="9" pref="9" max="-2" attributes="0"/>
-                      <Component id="annotationTypeField" min="-2" max="-2" attributes="0"/>
+                      <Component id="entityTypeNameTextField" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="8" pref="8" max="-2" attributes="0"/>
@@ -76,11 +76,11 @@
   <SubComponents>
     <Component class="javax.swing.JColorChooser" name="colorChooser">
     </Component>
-    <Component class="javax.swing.JTextField" name="annotationTypeField">
+    <Component class="javax.swing.JTextField" name="entityTypeNameTextField">
     </Component>
     <Component class="javax.swing.JLabel" name="infoLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Annotation Type: "/>
+        <Property name="text" type="java.lang.String" value="Entity Type Name"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="cancelButton">

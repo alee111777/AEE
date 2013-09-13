@@ -7,7 +7,7 @@ package edu.sfsu.evaluator.view.menu;
 import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
 import edu.sfsu.evaluator.view.importer.ImportDialogSWING;
-import edu.sfsu.evaluator.view.menu.add.AddAnnotationTypeDialog;
+import edu.sfsu.evaluator.view.menu.add.AddEntityTypeDialog;
 import edu.sfsu.evaluator.view.menu.add.CreateComplexEntityRuleDialog;
 import edu.sfsu.evaluator.view.menu.evaluate.LabelEvaluator;
 import edu.sfsu.evaluator.view.menu.evaluate.MeasurementEvaluatorDialog;
@@ -136,57 +136,31 @@ public class EvaluatorMenu extends JMenuBar
         JMenu createMenu = new JMenu("Create");
         this.add(createMenu);
 
-        // Add --> Annotation Type
-        JMenuItem annotationMenuItem = new JMenuItem("Annotation Type");
-        annotationMenuItem.addActionListener(new ActionListener()
+        // Add --> Entity Type
+        JMenuItem addEntityTypeMenuItem = new JMenuItem("Entity Type");
+        addEntityTypeMenuItem.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                buttonPressedAddAnnotation();
+                buttonPressedAddEntityType();
             }
         });
-        createMenu.add(annotationMenuItem);
+        createMenu.add(addEntityTypeMenuItem);
 
-        // Add --> Complex Entity
-        JMenuItem complexEntityMenuItem = new JMenuItem("Complex Entity");
-        complexEntityMenuItem.addActionListener(new ActionListener()
+        // Add --> Complex Entity Rule
+        JMenuItem complexEntityRuleMenuItem =
+                new JMenuItem("Complex Entity Rule");
+        complexEntityRuleMenuItem.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                buttonPressedAddComplexEntity();
+                buttonPressedAddComplexEntityRule();
             }
         });
-        createMenu.add(complexEntityMenuItem);
-        /*
-         // Edit
-         JMenu editMenu = new JMenu("Edit");
-         this.add(editMenu);
+        createMenu.add(complexEntityRuleMenuItem);
 
-         // Edit -> Annotations
-         JMenuItem annotationsMenuItem = new JMenuItem("Annotations");
-         annotationsMenuItem.addActionListener(new ActionListener()
-         {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-         buttonPressedEditAnnotations();
-         }
-         });
-         editMenu.add(annotationsMenuItem);
-
-         JMenuItem complexEntityRuleMenuItem = new JMenuItem("Complex Entity Rules");
-         complexEntityRuleMenuItem.addActionListener(new ActionListener()
-         {
-         @Override
-         public void actionPerformed(ActionEvent e)
-         {
-         buttonPressedEditComplexEntityRules();
-         }
-         });
-         editMenu.add(complexEntityRuleMenuItem);
-         */
         // Preferences
         JMenu preferencesMenu = new JMenu("Preferences");
         this.add(preferencesMenu);
@@ -292,6 +266,8 @@ public class EvaluatorMenu extends JMenuBar
         });
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setMultiSelectionEnabled(false);
+        // Ask user for directory
+        // If successful have Controller set it as workspace
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION)
         {
@@ -307,12 +283,14 @@ public class EvaluatorMenu extends JMenuBar
      */
     public void buttonPressedFileAddDirs()
     {
-        if (!viewModel.isModelLoaded())
+        // Model must be loaded to add dirs to corpus
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
 
+        // Open in last directory the user navigated to
         JFileChooser fc;
         if (lastFileDir != null)
         {
@@ -339,21 +317,21 @@ public class EvaluatorMenu extends JMenuBar
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         // Allow mutiple directories to be added.
         fc.setMultiSelectionEnabled(true);
+        // Ask user for files
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION)
         {
+            // For each directory selected
             File[] dirs = fc.getSelectedFiles();
-            for (int i = 0;
-                    i < dirs.length;
-                    i++)
+            for (int i = 0; i < dirs.length; i++)
             {
                 if (dirs[i].isDirectory())
                 {
+                    // For each file in those directories
                     File[] files = dirs[i].listFiles();
-                    for (int j = 0;
-                            j < files.length;
-                            j++)
+                    for (int j = 0; j < files.length; j++)
                     {
+                        // Attempt to add document to corpus
                         if (files[j].isFile())
                         {
                             lastFileDir = files[j].getParent();
@@ -362,6 +340,7 @@ public class EvaluatorMenu extends JMenuBar
                     }
                 }
             }
+            // Repaint view
             viewModel.repaintView();
         }
     }
@@ -373,12 +352,14 @@ public class EvaluatorMenu extends JMenuBar
      */
     public void buttonPressedFileAddFiles()
     {
-        if (!viewModel.isModelLoaded())
+        // Model must be set to add files to corpus
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
 
+        // Open in last dir user navigated to
         JFileChooser fc;
         if (lastFileDir != null)
         {
@@ -389,14 +370,14 @@ public class EvaluatorMenu extends JMenuBar
         }
         fc.setFileFilter(new FileNameExtensionFilter("Text file", "txt"));
         fc.setMultiSelectionEnabled(true);
-        int returnVal = fc.showOpenDialog(this);
 
+        // Ask user for files
+        int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION)
         {
+            // For each file, add to directory
             File[] files = fc.getSelectedFiles();
-            for (int i = 0;
-                    i < files.length;
-                    i++)
+            for (int i = 0; i < files.length; i++)
             {
                 if (files[i].isFile())
                 {
@@ -413,12 +394,13 @@ public class EvaluatorMenu extends JMenuBar
      */
     private void buttonPressedFileImport()
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
 
+        // Display import dialog
         ImportDialogSWING.showImportDialog(viewModel, controller);
     }
 
@@ -430,72 +412,101 @@ public class EvaluatorMenu extends JMenuBar
         controller.requestSaveState();
     }
 
-    public void buttonPressedAddAnnotation()
+    /**
+     * Add --> Entity Type button pressed
+     */
+    public void buttonPressedAddEntityType()
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
-        AddAnnotationTypeDialog.showAddAnnotationTypeDialog(viewModel,
+        // Display add entity type dialog
+        AddEntityTypeDialog.showAddEntityTypeDialog(viewModel,
                                                             controller);
     }
 
-    public void buttonPressedAddComplexEntity()
+    /**
+     * Add --> Complex Entity Rule button pressed
+     */
+    public void buttonPressedAddComplexEntityRule()
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
-        if (viewModel.getLabels().isEmpty())
+        // Can't gave complex entities with no entities!
+        if (viewModel.getEntityTypes().isEmpty())
         {
-            String message = "Must create annotation types first";
+            String message = "Must create entity types first";
             controller.showWarningMessage(message);
             return;
         }
+        // Display create complex entity rule dialog
         CreateComplexEntityRuleDialog.showCreateComplexEntityRuleDialog(
                 viewModel, controller);
     }
 
+    /**
+     * Preferences --> auto-highlight selection made.
+     * @param b
+     */
     private void preferencesAutoHighlightChanged(boolean b)
     {
         controller.setAutoHighlight(b);
     }
 
+    /**
+     * Preferences --> auto-add all selection made.
+     * @param b
+     */
     private void preferencesAutoAddAllChanged(boolean b)
     {
         controller.setAutoAddAll(b);
     }
 
+    /**
+     * Evaluate --> measurements button pressed.
+     */
     private void buttonPressedEvaluateMeasurements()
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
+        // Display measurements dialog
         MeasurementEvaluatorDialog.showMeasurementEvaluatorDialog(
                 viewModel, controller);
     }
 
+    /**
+     * Evaluate --> Label info button pressed.
+     */
     private void buttonPressedEvaluateLabelInfo()
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
+        // Display label evaluator dialog
         LabelEvaluator.showLabelEvaluator(viewModel, controller);
     }
 
+    /**
+     * Multi-Editor button pressed
+     */
     private void buttonPressedMutliEditor()
     {
-        if (!viewModel.isModelLoaded())
+        if (!viewModel.isModelSet())
         {
-            controller.showWarningMessage(EvaluatorViewModel.NO_MODEL_LOADED);
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
             return;
         }
+        // Display multi editor
         MultiEditorDialog.showMultiEditorDialog(viewModel, controller);
     }
 }

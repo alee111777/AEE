@@ -7,7 +7,7 @@ package edu.sfsu.evaluator.model;
 import java.util.ArrayList;
 
 /**
- *
+ * Entities and complex entities associated with a document version.
  * @author Eric Chiang
  */
 public class AnnotatedDocumentVersion implements java.io.Serializable
@@ -22,32 +22,54 @@ public class AnnotatedDocumentVersion implements java.io.Serializable
         complexEntities = new ArrayList();
     }
 
+    /**
+     * Add entity.
+     * @param entity
+     * @return
+     */
     public boolean addEntity(Entity entity)
     {
         entities.add(entity);
         return true;
     }
 
+    /**
+     * Add complex entity.
+     * @param complexEntity
+     * @return
+     */
     public boolean addComplexEntity(ComplexEntity complexEntity)
     {
         complexEntities.add(complexEntity);
         return true;
     }
 
+    /**
+     * Get all entities.
+     * @return
+     */
     public ArrayList<Entity> getEntities()
     {
         return new ArrayList(entities);
     }
 
+    /**
+     * Get all complex entities.
+     * @return
+     */
     public ArrayList<ComplexEntity> getComplexEntities()
     {
         return new ArrayList(complexEntities);
     }
 
+    /**
+     * Remove entity by object. Return true if successful.
+     * @param entity
+     * @return
+     */
     public boolean removeEntity(Entity entity)
     {
-        for (Entity a
-                : entities)
+        for (Entity a : entities)
         {
             if (a.equals(entity))
             {
@@ -58,10 +80,14 @@ public class AnnotatedDocumentVersion implements java.io.Serializable
         return false;
     }
 
+    /**
+     * Remove complex entity by object. Return true if successful.
+     * @param complexEntity
+     * @return
+     */
     public boolean removeComplexEntity(ComplexEntity complexEntity)
     {
-        for (ComplexEntity r
-                : complexEntities)
+        for (ComplexEntity r : complexEntities)
         {
             if (r.equals(complexEntity))
             {

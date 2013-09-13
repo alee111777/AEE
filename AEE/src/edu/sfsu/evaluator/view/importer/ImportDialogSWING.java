@@ -7,7 +7,7 @@ package edu.sfsu.evaluator.view.importer;
 import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
 import edu.sfsu.evaluator.model.Entity;
-import static edu.sfsu.evaluator.view.importer.ImportDialog.initialText;
+import static edu.sfsu.evaluator.view.importer.ImportDialog.INITIAL_MESSAGE;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +40,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
 
         this.setTitle("IMPORT");
         ArrayList<String> labelNames =
-                new ArrayList(viewModel.getLabels().keySet());
+                new ArrayList(viewModel.getEntityTypes().keySet());
 
         Collections.sort(labelNames);
         for (String labelName
@@ -260,12 +260,12 @@ public class ImportDialogSWING extends javax.swing.JDialog
 
             String docText = viewModel.getDocumentText(docName);
             String filePath = fileTextField.getText();
-            if (filePath.compareTo(initialText) == 0)
+            if (filePath.compareTo(INITIAL_MESSAGE) == 0)
             {
                 return;
             }
             ArrayList<Entity> annotations =
-                    AnnotationReader.readAnnotations(filePath, docText, label);
+                    EntityReader.readEntities(filePath, docText, label);
             for (Entity a
                     : annotations)
             {

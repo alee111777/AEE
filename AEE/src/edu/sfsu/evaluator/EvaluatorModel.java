@@ -9,7 +9,8 @@ import edu.sfsu.evaluator.model.AnnotatedDocument;
 import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.evaluator.model.ComplexEntity;
 import edu.sfsu.evaluator.model.ComplexEntityRule;
-import edu.sfsu.io.Serializer;
+import edu.sfsu.util.FileUtilities;
+import edu.sfsu.util.io.Serializer;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +21,10 @@ import java.util.HashMap;
  * The evaluator model contains all information in the dataspace. This includes
  * entities, documents, document versions, etc.
  * <p/>
- * @author eric
+ * Maintains documents and document versions by unique name. Much of the error
+ * checking within this module is to prevent replica names.
+ * <p/>
+ * @author Eric Chiang
  */
 public class EvaluatorModel
 {
@@ -40,6 +44,9 @@ public class EvaluatorModel
     private final String ENTITIES_SER = "entities.ser";
 
     /**
+     * The EvaluatorModel is unique to a workspace. This means that it is always
+     * passed a workspace path from which to operate.
+     * <p/>
      * @param viewModel
      * @param workspacePath
      * @throws FileNotFoundException
@@ -61,6 +68,8 @@ public class EvaluatorModel
     {
         this.workspacePath = workspacePath;
         this.viewModel = viewModel;
+
+        // If workspace path is not a directory then throw exception.
         if (!(new File(workspacePath).isDirectory()))
         {
             throw new FileNotFoundException();
@@ -69,12 +78,13 @@ public class EvaluatorModel
         // Attempt to retrieve documents
         try
         {
-            String docSerPath = mergePath(workspacePath, DOCUMENTS_SER);
+            String docSerPath =
+                    FileUtilities.mergePath(workspacePath, DOCUMENTS_SER);
             if (!(new File(docSerPath).isFile()))
             {
                 throw new FileNotFoundException();
             }
-            Object object = edu.sfsu.io.Deserializer.deserialize(docSerPath);
+            Object object = edu.sfsu.util.io.Deserializer.deserialize(docSerPath);
             if (!(object instanceof HashMap))
             {
                 throw new ClassNotFoundException();
@@ -93,13 +103,13 @@ public class EvaluatorModel
         try
         {
             String entityTypeSerPath =
-                    mergePath(workspacePath, ENTITY_TYPE_SER);
+                    FileUtilities.mergePath(workspacePath, ENTITY_TYPE_SER);
             if (!(new File(entityTypeSerPath).isFile()))
             {
                 throw new FileNotFoundException();
             }
             Object object =
-                    edu.sfsu.io.Deserializer.deserialize(entityTypeSerPath);
+                    edu.sfsu.util.io.Deserializer.deserialize(entityTypeSerPath);
             if (!(object instanceof HashMap))
             {
                 throw new ClassNotFoundException();
@@ -117,13 +127,14 @@ public class EvaluatorModel
         // Attempt to retrieve complex entity rules.
         try
         {
-            String entitiesSerPath = mergePath(workspacePath, ENTITIES_SER);
+            String entitiesSerPath =
+                    FileUtilities.mergePath(workspacePath, ENTITIES_SER);
             if (!(new File(entitiesSerPath).isFile()))
             {
                 throw new FileNotFoundException();
             }
             Object object =
-                    edu.sfsu.io.Deserializer.deserialize(entitiesSerPath);
+                    edu.sfsu.util.io.Deserializer.deserialize(entitiesSerPath);
             if (!(object instanceof ArrayList))
             {
                 throw new ClassNotFoundException();
@@ -181,43 +192,6 @@ public class EvaluatorModel
     }
 
     /**
-     * Internal method to merge two paths.
-     * <p/>
-     * Examples:
-     * <p/>
-     * <t/>'usr/bin' + '/java' = '/usr/bin/java'
-     * <p/>
-     * <t/>'usr/bin/' + 'java' = '/usr/bin/java'
-     * <p/>
-     * @param path1
-     * @param path2
-     * @return
-     */
-    private String mergePath(String path1, String path2)
-    {
-        if (path1.length() <= 0)
-        {
-            return path2;
-        }
-        String fileSepKey = "file.separator";
-        String fileSeparator = System.getProperty(fileSepKey);
-        if (fileSeparator == null || fileSeparator.length() == 0)
-        {
-            System.err.printf("Bad system property: '%s'\n", fileSepKey);
-            return null;
-        }
-        // if the last char is the file separator
-        if (path1.lastIndexOf(fileSeparator)
-                == path1.length() - fileSeparator.length())
-        {
-            return path1 + path2;
-        } else
-        {
-            return path1 + fileSeparator + path2;
-        }
-    }
-
-    /**
      * Does this model contain entity document named docName?
      * <p/>
      * @param docName
@@ -247,7 +221,7 @@ public class EvaluatorModel
     }
 
     /**
-     * Get entities of entity  for entity specific document.
+     * Get entities of entity for entity specific document.
      * <p/>
      * @param docName
      * @param verName
@@ -380,13 +354,14 @@ public class EvaluatorModel
         checkDocumentVersion(docName, verName, true);
         documents.get(docName)
                 .getAnnotationVersion(verName).removeEntity(entity);
+
+        // Delete all complex entities which use this sub entity
         ArrayList<ComplexEntity> complexEntities =
                 documents.get(docName).getAnnotationVersion(verName)
                 .getComplexEntities();
-        for (ComplexEntity complexEntity
-                : complexEntities)
+        for (ComplexEntity complexEntity : complexEntities)
         {
-            if (complexEntity.getEntities().contains(entity))
+            if (complexEntity.getSubEntities().contains(entity))
             {
                 requestComplexEntityDelete(docName, verName, complexEntity);
             }
@@ -436,11 +411,10 @@ public class EvaluatorModel
     public void requestComplexEntityRuleAdd(
             ComplexEntityRule complexEntityRule) throws BadModelRequestException
     {
-        String entityName = complexEntityRule.getEntityRuleName();
-        for (ComplexEntityRule rule
-                : complexEntityRules)
+        String entityName = complexEntityRule.getComplexEntityType();
+        for (ComplexEntityRule rule : complexEntityRules)
         {
-            if (rule.getEntityRuleName().compareTo(entityName) == 0)
+            if (rule.getComplexEntityType().compareTo(entityName) == 0)
             {
                 throw new BadModelRequestException(
                         String.format(
@@ -462,23 +436,26 @@ public class EvaluatorModel
             String complexEntityRuleName, Color color) throws
             BadModelRequestException
     {
-        boolean contained = false;
-        for (ComplexEntityRule rule
-                : complexEntityRules)
+        for (ComplexEntityRule rule : complexEntityRules)
         {
-            if (rule.getEntityRuleName().compareTo(complexEntityRuleName) == 0)
+            if (rule.getComplexEntityType().compareTo(complexEntityRuleName) == 0)
             {
-                rule.setColor(color);
-                contained = true;
-                break;
+                ComplexEntityRule newRule =
+                        new ComplexEntityRule(
+                        rule.getComplexEntityType(),
+                        rule.getRuleNodes(),
+                        color);
+                complexEntityRules.remove(rule);
+                complexEntityRules.add(newRule);
+                return;
             }
         }
-        if (!contained)
-        {
-            throw new BadModelRequestException(
-                    String.format("Complex entity rule '%s' not contained.",
-                                  complexEntityRuleName));
-        }
+
+        // If rule was not found throw exception.
+        throw new BadModelRequestException(
+                String.format("Complex entity rule '%s' not contained.",
+                              complexEntityRuleName));
+
     }
 
     /**
@@ -490,10 +467,9 @@ public class EvaluatorModel
             String complexEntityRuleName) throws BadModelRequestException
     {
         boolean containsRule = false;
-        for (ComplexEntityRule rule
-                : complexEntityRules)
+        for (ComplexEntityRule rule : complexEntityRules)
         {
-            if (rule.getEntityRuleName().compareTo(complexEntityRuleName) == 0)
+            if (rule.getComplexEntityType().compareTo(complexEntityRuleName) == 0)
             {
                 complexEntityRules.remove(rule);
                 containsRule = true;
@@ -507,17 +483,16 @@ public class EvaluatorModel
                                   complexEntityRuleName));
         }
         // Remove all associated entityTypes
-        for (String docName
-                : documents.keySet())
+        for (String docName : documents.keySet())
         {
-            for (String verName
-                    : documents.get(docName).getAnnotationVersionsNames())
+            for (String verName :
+                    documents.get(docName).getAnnotationVersionsNames())
             {
-                for (ComplexEntity c
-                        : documents.get(docName).getAnnotationVersion(verName).
+                for (ComplexEntity c :
+                        documents.get(docName).getAnnotationVersion(verName).
                         getComplexEntities())
                 {
-                    if (c.getEntityType().compareTo(complexEntityRuleName) == 0)
+                    if (c.getComplexEntityType().compareTo(complexEntityRuleName) == 0)
                     {
                         requestComplexEntityDelete(docName, verName, c);
                     }
@@ -554,6 +529,12 @@ public class EvaluatorModel
         documents.remove(docName);
     }
 
+    /**
+     * Request to rename a document.
+     * @param oldDocName
+     * @param newDocName
+     * @throws BadModelRequestException
+     */
     public void requestDocumentRename(
             String oldDocName,
             String newDocName)
@@ -565,6 +546,12 @@ public class EvaluatorModel
         viewModel.fireDocuentRenamed(oldDocName, newDocName);
     }
 
+    /**
+     * Request to add a new document version.
+     * @param docName
+     * @param verName
+     * @throws BadModelRequestException
+     */
     public void requestDocumentVersionAdd(
             String docName,
             String verName)
@@ -575,6 +562,12 @@ public class EvaluatorModel
         documents.get(docName).createAnnotationVersion(verName);
     }
 
+    /**
+     * Request to delete a document version.
+     * @param docName
+     * @param verName
+     * @throws BadModelRequestException
+     */
     public void requestDocumentVersionDelete(
             String docName,
             String verName)
@@ -584,6 +577,13 @@ public class EvaluatorModel
         documents.get(docName).removeAnnotationVersion(verName);
     }
 
+    /**
+     * Request to rename a document version.
+     * @param docName
+     * @param oldVerName
+     * @param newVerName
+     * @throws BadModelRequestException
+     */
     public void requestDocumentVersionRename(
             String docName,
             String oldVerName,
@@ -596,6 +596,12 @@ public class EvaluatorModel
         viewModel.fireDocumentVersionRenamed(docName, oldVerName, newVerName);
     }
 
+    /**
+     * Request to add a new entity type. E.G. "illness", "name", "noun"
+     * @param entityType
+     * @param color
+     * @throws BadModelRequestException
+     */
     public void requestEntityTypeAdd(
             String entityType,
             Color color)
@@ -639,7 +645,8 @@ public class EvaluatorModel
                     : documents.get(docName).getAnnotationVersionsNames())
             {
                 for (Entity a
-                        : documents.get(docName).getAnnotationVersion(verName).getEntities())
+                        : documents.get(docName).getAnnotationVersion(verName).
+                        getEntities())
                 {
                     if (a.getEntityType().compareTo(entityType) == 0)
                     {
@@ -675,17 +682,21 @@ public class EvaluatorModel
                     : documents.get(docName).getAnnotationVersionsNames())
             {
                 for (Entity entity
-                        : documents.get(docName).getAnnotationVersion(verName).getEntities())
+                        : documents.get(docName).getAnnotationVersion(verName)
+                        .getEntities())
                 {
                     if (entity.getEntityType().compareTo(oldName) == 0)
                     {
-                        Entity renamedAnnotation = new Entity(entity.getText(),
-                                                              newName,
-                                                              entity.getStart(), entity.
+                        Entity renamedAnnotation = new Entity(
+                                entity.getText(),
+                                newName,
+                                entity.getStart(), entity.
                                 getEnd());
                         documents.get(docName).
-                                getAnnotationVersion(verName).removeEntity(entity);
-                        documents.get(docName).getAnnotationVersion(verName).addEntity(renamedAnnotation);
+                                getAnnotationVersion(verName).
+                                removeEntity(entity);
+                        documents.get(docName).getAnnotationVersion(verName).
+                                addEntity(renamedAnnotation);
                     }
                 }
             }
@@ -693,11 +704,17 @@ public class EvaluatorModel
         entityTypes.put(newName, entityTypes.remove(oldName));
     }
 
-    public void requestSaveState() throws Exception
+    /**
+     * Serialize all data to the workspace to be retrieved later.
+     * @throws Exception
+     */
+    public void requestSaveState()
     {
         try
         {
-            Serializer.serialize(mergePath(workspacePath, DOCUMENTS_SER), documents);
+            Serializer.serialize(
+                    FileUtilities.mergePath(workspacePath, DOCUMENTS_SER),
+                    documents);
         } catch (Exception e)
         {
             System.err.println("Could not save documents");
@@ -705,7 +722,9 @@ public class EvaluatorModel
 
         try
         {
-            Serializer.serialize(mergePath(workspacePath, ENTITY_TYPE_SER), entityTypes);
+            Serializer.serialize(
+                    FileUtilities.mergePath(workspacePath, ENTITY_TYPE_SER),
+                    entityTypes);
         } catch (Exception e)
         {
             System.err.println("Could not save labels");
@@ -713,8 +732,9 @@ public class EvaluatorModel
 
         try
         {
-            Serializer.serialize(mergePath(workspacePath, ENTITIES_SER),
-                                 complexEntityRules);
+            Serializer.serialize(
+                    FileUtilities.mergePath(workspacePath, ENTITIES_SER),
+                    complexEntityRules);
         } catch (Exception e)
         {
             System.err.println("Could not save entity rules");

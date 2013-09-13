@@ -26,11 +26,12 @@ public class Evaluator
                     /**
                      * Set UI look and feel.
                      */
-                    //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (Exception e)
                 {
                     System.err.println("Error loading look and feel");
                 }
+                // Create controller
                 EvaluatorController controller = new EvaluatorController();
             }
         };

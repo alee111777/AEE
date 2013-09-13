@@ -7,11 +7,11 @@ package edu.sfsu.evaluator;
 import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.evaluator.model.ComplexEntity;
 import edu.sfsu.evaluator.model.ComplexEntityRule;
-import edu.sfsu.evaluator.view.EvaluatorInfo;
+import edu.sfsu.evaluator.view.EvaluatorInfoLabel;
 import edu.sfsu.evaluator.view.menu.EvaluatorMenu;
 import edu.sfsu.evaluator.view.text.EvaluatorTextScreen;
-import edu.sfsu.evaluator.view.tree.EvaluatorAnnotationInfo;
-import edu.sfsu.evaluator.view.tree.EvaluatorWorkspace;
+import edu.sfsu.evaluator.view.tree.EvaluatorEntityTree;
+import edu.sfsu.evaluator.view.tree.EvaluatorCorpusTree;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -29,8 +29,9 @@ import javax.swing.JSplitPane;
 /**
  * Contains the main frame and organizes all GUI elements.
  * <p/>
- * View elements may request changes to the model via the controller. To receive
- * information about the model, views must go through the ViewModel.
+ * View elements may request changes to the evaluatorModel via the controller.
+ * To receive information about the evaluatorModel, views must go through the
+ * ViewModel.
  * <p/>
  * The controller is also the starting point of the entire program.
  * <p/>
@@ -41,49 +42,55 @@ public class EvaluatorController
 
     // Evaluator elements.
     private EvaluatorViewModel viewModel;
-    private EvaluatorModel model;
-    private EvaluatorWorkspace evaluatorWorkspace;
-    private EvaluatorAnnotationInfo evaluatorAnnoInfo;
+    private EvaluatorModel evaluatorModel;
+    private EvaluatorCorpusTree evaluatorCorpusTree;
+    private EvaluatorEntityTree evaluatorEntityTree;
     private EvaluatorTextScreen evaluatorTextScreen;
-    private EvaluatorInfo evaluatorInfo;
-    private EvaluatorMenu evaluatorMenu;
-    private JFrame viewFrame;
+    private EvaluatorInfoLabel evaluatorInfoBar;
+    private EvaluatorMenu evaluatorMenuBar;
+    private JFrame evaluatorViewFrame;
 
     public EvaluatorController()
     {
-        // Initialize view model
+        // Initialize view evaluatorModel
         viewModel = new EvaluatorViewModel();
 
         // Initialize main frame
-        viewFrame = new JFrame("Annotation Evaluator");
-        viewFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        viewFrame.setSize(1000, 800);
+        evaluatorViewFrame = new JFrame("Annotation Evaluator");
+        evaluatorViewFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        evaluatorViewFrame.setSize(1000, 800);
 
         // Initialize all views
-        evaluatorWorkspace = new EvaluatorWorkspace(viewModel, this);
-        evaluatorAnnoInfo = new EvaluatorAnnotationInfo(viewModel, this);
+        evaluatorCorpusTree = new EvaluatorCorpusTree(viewModel, this);
+        evaluatorEntityTree = new EvaluatorEntityTree(viewModel, this);
         evaluatorTextScreen = new EvaluatorTextScreen(viewModel, this);
-        evaluatorInfo = new EvaluatorInfo(viewModel, this);
-        evaluatorMenu = new EvaluatorMenu(viewModel, this);
-        viewFrame.setJMenuBar(evaluatorMenu);
+        evaluatorInfoBar = new EvaluatorInfoLabel(viewModel, this);
+        evaluatorMenuBar = new EvaluatorMenu(viewModel, this);
+        evaluatorViewFrame.setJMenuBar(evaluatorMenuBar);
 
         // Attach views to the View Model
-        viewModel.attachView(evaluatorWorkspace);
-        viewModel.attachView(evaluatorAnnoInfo);
+        viewModel.attachView(evaluatorCorpusTree);
+        viewModel.attachView(evaluatorEntityTree);
         viewModel.attachView(evaluatorTextScreen);
-        viewModel.attachView(evaluatorInfo);
+        viewModel.attachView(evaluatorInfoBar);
 
         // Initalize buttons
         JButton addFileButton = new JButton("+ File");
         JButton addDirButton = new JButton("+ Dir");
         JButton addEntityType = new JButton("+ Entity Type");
         JButton addComplexEntityRule = new JButton("+ Complex Entity Rule");
+
+        /**
+         * Add action listeners to buttons.
+         * To prevent rewriting code these action listeners call
+         * evaluatorMenuBar methods which already implement the same actions.
+         */
         addFileButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenu.buttonPressedFileAddFiles();
+                evaluatorMenuBar.buttonPressedFileAddFiles();
             }
         });
         addDirButton.addActionListener(new ActionListener()
@@ -91,7 +98,7 @@ public class EvaluatorController
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenu.buttonPressedFileAddDirs();
+                evaluatorMenuBar.buttonPressedFileAddDirs();
             }
         });
         addEntityType.addActionListener(new ActionListener()
@@ -99,7 +106,7 @@ public class EvaluatorController
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenu.buttonPressedAddAnnotation();
+                evaluatorMenuBar.buttonPressedAddEntityType();
             }
         });
         addComplexEntityRule.addActionListener(new ActionListener()
@@ -107,20 +114,20 @@ public class EvaluatorController
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenu.buttonPressedAddComplexEntity();
+                evaluatorMenuBar.buttonPressedAddComplexEntityRule();
             }
         });
 
-        // Set layout of context pane
-        Container pane = viewFrame.getContentPane();
+        // Set layout of context pane of main frame.
+        Container pane = evaluatorViewFrame.getContentPane();
         pane.setLayout(new GridBagLayout());
 
         // Create grid bag constraints
         GridBagConstraints c = new GridBagConstraints();
 
         // Attach trees to scrollable panes
-        JScrollPane wkspScrollPane = new JScrollPane(evaluatorWorkspace);
-        JScrollPane infoScrollPane = new JScrollPane(evaluatorAnnoInfo);
+        JScrollPane corpusScrollPane = new JScrollPane(evaluatorCorpusTree);
+        JScrollPane entityScrollPane = new JScrollPane(evaluatorEntityTree);
 
         // Construct upper workspace panel with layout
         JPanel upperPanel = new JPanel(new GridBagLayout());
@@ -139,7 +146,7 @@ public class EvaluatorController
         c.weighty = 0.0;
         c.gridx = 0;
         c.gridy = 1;
-        upperPanel.add(evaluatorInfo, c);
+        upperPanel.add(evaluatorInfoBar, c);
 
         // Create tree panels
         JPanel wkspPanel = new JPanel(new GridBagLayout());
@@ -155,8 +162,9 @@ public class EvaluatorController
         c.weighty = 1.0;
         c.gridwidth = 2;
 
-        wkspPanel.add(wkspScrollPane, c);
-        infoPanel.add(infoScrollPane, c);
+        // Add main trees
+        wkspPanel.add(corpusScrollPane, c);
+        infoPanel.add(entityScrollPane, c);
 
         c.gridx = 0;
         c.gridy = 0;
@@ -164,6 +172,7 @@ public class EvaluatorController
         c.weighty = 0.0;
         c.gridwidth = 1;
 
+        // Add buttons
         wkspPanel.add(addFileButton, c);
         infoPanel.add(addEntityType, c);
 
@@ -173,6 +182,7 @@ public class EvaluatorController
         c.weighty = 0.0;
         c.gridwidth = 1;
 
+        // Add buttons
         wkspPanel.add(addDirButton, c);
         infoPanel.add(addComplexEntityRule, c);
 
@@ -198,7 +208,6 @@ public class EvaluatorController
                                               lowerPanel);
 
         splitPane.setDividerLocation(400);
-
         c.weighty = 1.0;
         c.weightx = 1.0;
         c.gridx = 0;
@@ -206,11 +215,13 @@ public class EvaluatorController
         pane.add(splitPane, c);
 
         // Display frame!
-        viewFrame.setVisible(true);
+        evaluatorViewFrame.setVisible(true);
     }
 
     /**
-     * Display a specific document version within all views.
+     * Display a specific document version within all views. This will
+     * essentially cause the text screen and info tree to load information
+     * pertaining to a specific document version.
      * <p/>
      * @param docName
      * @param verName
@@ -219,20 +230,23 @@ public class EvaluatorController
             String docName,
             String verName)
     {
-        if (!evaluatorAnnoInfo.isDisplaying(docName, verName))
+        // If these GUI elements are already displaying this document version
+        // then don't bother redisplaying.
+        if (!evaluatorEntityTree.isDisplaying(docName, verName))
         {
-            evaluatorAnnoInfo.display(docName, verName);
+            evaluatorEntityTree.display(docName, verName);
         }
         if (!evaluatorTextScreen.isDisplaying(docName, verName))
         {
             evaluatorTextScreen.display(docName, verName);
-            evaluatorInfo.display(docName, verName);
+            evaluatorInfoBar.display(docName, verName);
         }
 
     }
 
     /**
-     * Within the text screen display entity specific entity.
+     * Move the text screen cursor to a specific entity. Will scroll to that
+     * entity if it is off the screen.
      * <p/>
      * @param docName
      * @param verName
@@ -250,12 +264,12 @@ public class EvaluatorController
      */
     public JFrame getEvaluatorFrame()
     {
-        return viewFrame;
+        return evaluatorViewFrame;
     }
 
     /**
-     * Request to add an entity to the model. Document and version name specify
-     * the document version to be added to.
+     * Request to add an entity to the evaluatorModel. Document and version name
+     * specify the document version to be added to.
      * <p/>
      * @param docName Document which contains the entity.
      * @param verName
@@ -268,7 +282,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestEntityAdd(docName, verName, entity);
+            evaluatorModel.requestEntityAdd(docName, verName, entity);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -276,8 +290,8 @@ public class EvaluatorController
     }
 
     /**
-     * Request to delete an entity from the model. Document and version name
-     * specify the document version to be added to.
+     * Request to delete an entity from the evaluatorModel. Document and version
+     * name specify the document version to be added to.
      * <p/>
      * @param docName
      * @param verName
@@ -289,7 +303,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestEntityDelete(docName, verName, annotation);
+            evaluatorModel.requestEntityDelete(docName, verName, annotation);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -297,7 +311,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to add a complex entity to the model.
+     * Request to add a complex entity to the evaluatorModel.
      * <p/>
      * @param docName
      * @param verName
@@ -310,7 +324,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestComplexEntityAdd(docName, verName, complexEntity);
+            evaluatorModel.requestComplexEntityAdd(docName, verName, complexEntity);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -318,7 +332,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to delete a complex entity from the model.
+     * Request to delete a complex entity from the evaluatorModel.
      * <p/>
      * @param docName
      * @param verName
@@ -331,7 +345,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestComplexEntityDelete(docName, verName, complexEntity);
+            evaluatorModel.requestComplexEntityDelete(docName, verName, complexEntity);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -339,7 +353,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to add a complex entity rule to the model.
+     * Request to add a complex entity rule to the evaluatorModel.
      * @param complexEntityRule
      */
     public void requestComplexEntityRuleAdd(
@@ -347,7 +361,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestComplexEntityRuleAdd(complexEntityRule);
+            evaluatorModel.requestComplexEntityRuleAdd(complexEntityRule);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -364,7 +378,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestComplexEntityRuleColorChanged(complexEntityRuleName,
+            evaluatorModel.requestComplexEntityRuleColorChanged(complexEntityRuleName,
                                                        color);
         } catch (Exception e)
         {
@@ -380,7 +394,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestComplexEntityRuleDelete(complexEntityRuleName);
+            evaluatorModel.requestComplexEntityRuleDelete(complexEntityRuleName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -399,7 +413,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestDocumentAdd(docName, docText);
+            evaluatorModel.requestDocumentAdd(docName, docText);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -417,7 +431,7 @@ public class EvaluatorController
         try
         {
             // Get document text from file path.
-            String docText = edu.sfsu.io.FileReader.getTextFromFile(docPath);
+            String docText = edu.sfsu.util.FileUtilities.getTextFromFile(docPath);
 
             // Get file name from path. Ex: "corpus/1234a.txt" -> "1234.txt"
             int i = docPath.lastIndexOf(System.getProperty("file.separator"));
@@ -430,7 +444,7 @@ public class EvaluatorController
                 docName = docPath.substring(i + 1);
             }
 
-            // While model contains document name create tmp
+            // While evaluatorModel contains document name create tmp
             String tmpName = docName;
             int n = 1;
             while (viewModel.containsDocument(tmpName))
@@ -439,7 +453,7 @@ public class EvaluatorController
             }
             docName = tmpName;
 
-            // Add document to model
+            // Add document to evaluatorModel
             requestDocumentAdd(docName, docText);
 
         } catch (Exception e)
@@ -450,7 +464,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to delete a document from the model.
+     * Request to delete a document from the evaluatorModel.
      * <p/>
      * @param docName
      */
@@ -459,7 +473,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestDocumentDelete(docName);
+            evaluatorModel.requestDocumentDelete(docName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -475,7 +489,7 @@ public class EvaluatorController
             String oldDocName)
     {
         // Get document name
-        String newDocName = JOptionPane.showInputDialog(viewFrame,
+        String newDocName = JOptionPane.showInputDialog(evaluatorViewFrame,
                                                         "Enter new document name",
                                                         oldDocName);
         if (newDocName == null)
@@ -483,15 +497,15 @@ public class EvaluatorController
             return;
         }
 
-        // While model contains document name ask for a new name.
+        // While evaluatorModel contains document name ask for a new name.
         while (viewModel.containsDocument(newDocName))
         {
             String warning =
                     String.format("Already a document named '%s'",
                                   newDocName);
-            JOptionPane.showMessageDialog(viewFrame, warning, "Naming Error",
+            JOptionPane.showMessageDialog(evaluatorViewFrame, warning, "Naming Error",
                                           JOptionPane.ERROR_MESSAGE);
-            newDocName = JOptionPane.showInputDialog(viewFrame,
+            newDocName = JOptionPane.showInputDialog(evaluatorViewFrame,
                                                      "Enter new document name",
                                                      newDocName);
             if (newDocName == null)
@@ -503,7 +517,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to rename a document contained by the model.
+     * Request to rename a document contained by the evaluatorModel.
      * <p/>
      * @param oldDocName
      * @param newDocName
@@ -514,7 +528,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestDocumentRename(oldDocName, newDocName);
+            evaluatorModel.requestDocumentRename(oldDocName, newDocName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -533,7 +547,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestDocumentVersionAdd(docName, verName);
+            evaluatorModel.requestDocumentVersionAdd(docName, verName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -578,7 +592,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestDocumentVersionDelete(docName, verName);
+            evaluatorModel.requestDocumentVersionDelete(docName, verName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -599,7 +613,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestDocumentVersionRename(docName, oldVerName, newVerName);
+            evaluatorModel.requestDocumentVersionRename(docName, oldVerName, newVerName);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -617,7 +631,7 @@ public class EvaluatorController
             String oldVerName)
     {
         // Get version name
-        String newVerName = JOptionPane.showInputDialog(viewFrame,
+        String newVerName = JOptionPane.showInputDialog(evaluatorViewFrame,
                                                         "Enter new document verison name",
                                                         oldVerName);
         if (newVerName == null)
@@ -626,16 +640,16 @@ public class EvaluatorController
         }
         try
         {
-            // While model contains version name ask for a new name.
+            // While evaluatorModel contains version name ask for a new name.
             while (viewModel.containsDocumentVersion(docName, newVerName))
             {
                 String warning =
                         String.format("Already a document version named '%s'",
                                       newVerName);
                 JOptionPane.
-                        showMessageDialog(viewFrame, warning, "Naming Error",
+                        showMessageDialog(evaluatorViewFrame, warning, "Naming Error",
                                           JOptionPane.ERROR_MESSAGE);
-                newVerName = JOptionPane.showInputDialog(viewFrame,
+                newVerName = JOptionPane.showInputDialog(evaluatorViewFrame,
                                                          "Enter new document verison name",
                                                          newVerName);
                 if (newVerName == null)
@@ -651,18 +665,18 @@ public class EvaluatorController
     }
 
     /**
-     * Request to add a label to the model.
+     * Request to add a label to the evaluatorModel.
      * <p/>
      * @param label
      * @param color
      */
-    public void requestLabelAdd(
+    public void requestEntityTypeAdd(
             String label,
             Color color)
     {
         try
         {
-            model.requestEntityTypeAdd(label, color);
+            evaluatorModel.requestEntityTypeAdd(label, color);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -670,7 +684,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to add a label to the model with a random color.
+     * Request to add a label to the evaluatorModel with a random color.
      * <p/>
      * @param label
      */
@@ -684,7 +698,7 @@ public class EvaluatorController
             float g = rand.nextFloat();
             float b = rand.nextFloat();
             Color randomColor = new Color(r, g, b);
-            model.requestEntityTypeAdd(label, randomColor);
+            evaluatorModel.requestEntityTypeAdd(label, randomColor);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -692,7 +706,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to change the color of a label within the model.
+     * Request to change the color of a label within the evaluatorModel.
      * <p/>
      * @param label
      * @param newColor
@@ -703,7 +717,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestEntityTypeColorChange(label, newColor);
+            evaluatorModel.requestEntityTypeColorChange(label, newColor);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -711,7 +725,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to delete a label from the model.
+     * Request to delete a label from the evaluatorModel.
      * <p/>
      * @param label
      */
@@ -720,7 +734,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestEntityTypeDelete(label);
+            evaluatorModel.requestEntityTypeDelete(label);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -728,7 +742,7 @@ public class EvaluatorController
     }
 
     /**
-     * Request to rename a label from the model.
+     * Request to rename a label from the evaluatorModel.
      * <p/>
      * @param oldLabel
      * @param newLabel
@@ -739,7 +753,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestEntityTypeRename(oldLabel, newLabel);
+            evaluatorModel.requestEntityTypeRename(oldLabel, newLabel);
         } catch (Exception e)
         {
             showErrorMessage(e);
@@ -753,7 +767,7 @@ public class EvaluatorController
     {
         try
         {
-            model.requestSaveState();
+            evaluatorModel.requestSaveState();
         } catch (Exception e)
         {
             String message = "Could not save workspace state";
@@ -812,7 +826,7 @@ public class EvaluatorController
         try
         {
             EvaluatorModel model = new EvaluatorModel(viewModel, docPath);
-            this.model = model;
+            this.evaluatorModel = model;
             viewModel.setModel(model);
         } catch (Exception e)
         {
@@ -829,7 +843,7 @@ public class EvaluatorController
     {
         System.err.println(e.getMessage());
         e.printStackTrace(System.err);
-        JOptionPane.showMessageDialog(viewFrame, e.getMessage(), "ERROR",
+        JOptionPane.showMessageDialog(evaluatorViewFrame, e.getMessage(), "ERROR",
                                       JOptionPane.ERROR_MESSAGE);
     }
 
@@ -840,7 +854,7 @@ public class EvaluatorController
      */
     public void showErrorMessage(String message)
     {
-        JOptionPane.showMessageDialog(viewFrame, message, "ERROR",
+        JOptionPane.showMessageDialog(evaluatorViewFrame, message, "ERROR",
                                       JOptionPane.ERROR_MESSAGE);
     }
 
@@ -851,7 +865,7 @@ public class EvaluatorController
      */
     public void showWarningMessage(String message)
     {
-        JOptionPane.showMessageDialog(viewFrame, message, "WARNING",
+        JOptionPane.showMessageDialog(evaluatorViewFrame, message, "WARNING",
                                       JOptionPane.WARNING_MESSAGE);
     }
 }

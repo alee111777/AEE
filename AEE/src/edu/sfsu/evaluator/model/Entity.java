@@ -95,6 +95,7 @@ public class Entity implements java.io.Serializable,
         return hash;
     }
 
+    // Compare by start and end
     @Override
     public int compareTo(Entity o)
     {

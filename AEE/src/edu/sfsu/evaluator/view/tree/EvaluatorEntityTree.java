@@ -40,7 +40,7 @@ import javax.swing.tree.TreePath;
  *
  * @author eric
  */
-public class EvaluatorAnnotationInfo extends JTree implements EvaluatorView
+public class EvaluatorEntityTree extends JTree implements EvaluatorView
 {
 
     private EvaluatorViewModel viewModel;
@@ -56,7 +56,7 @@ public class EvaluatorAnnotationInfo extends JTree implements EvaluatorView
     protected String ANNOTATIONS = "Annotations";
     private MouseListener mouseListener = null;
 
-    public EvaluatorAnnotationInfo(
+    public EvaluatorEntityTree(
             EvaluatorViewModel viewModel,
             EvaluatorController controller)
     {
@@ -820,7 +820,7 @@ public class EvaluatorAnnotationInfo extends JTree implements EvaluatorView
                 if (userObject instanceof String)
                 {
                     if (((String) userObject).compareTo(
-                            EvaluatorAnnotationInfo.ROOT) == 0)
+                            EvaluatorEntityTree.ROOT) == 0)
                     {
                         JLabel render =
                                 (JLabel) annotationRenderer.

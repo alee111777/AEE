@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * Annotated document. Only information associated with this class is the
+ * document text and the list of document versions.
  * @author Eric Chiang
  */
 public class AnnotatedDocument implements java.io.Serializable
 {
 
-    /*
-     * Labels associated with every document version.
-     */
+    // Labels associated with every document version.
     private String documentText;
+    // Annotation versions
     private HashMap<String, AnnotatedDocumentVersion> versions;
 
     public AnnotatedDocument(String documentText)
@@ -26,13 +26,23 @@ public class AnnotatedDocument implements java.io.Serializable
         versions = new HashMap();
     }
 
+    /**
+     * Get document text.
+     * @return
+     */
     public String getDocumentText()
     {
         return documentText;
     }
 
+    /**
+     * Creates a version of this document. Returns true if successful.
+     * @param name
+     * @return
+     */
     public boolean createAnnotationVersion(String name)
     {
+        // Ensure that name is an unique one.
         if (versions.containsKey(name))
         {
             System.err.printf("Already an annotated version named '%s'", name);
@@ -42,6 +52,11 @@ public class AnnotatedDocument implements java.io.Serializable
         return true;
     }
 
+    /**
+     * Get a version by name.
+     * @param name
+     * @return
+     */
     public AnnotatedDocumentVersion getAnnotationVersion(String name)
     {
         if (!versions.containsKey(name))
@@ -52,11 +67,20 @@ public class AnnotatedDocument implements java.io.Serializable
         return versions.get(name);
     }
 
+    /**
+     * Get the list of version names.
+     * @return
+     */
     public ArrayList<String> getAnnotationVersionsNames()
     {
         return new ArrayList(versions.keySet());
     }
 
+    /**
+     * Remove a version by name. Returns true if successful.
+     * @param name
+     * @return
+     */
     public boolean removeAnnotationVersion(String name)
     {
         if (!versions.containsKey(name))
@@ -68,6 +92,12 @@ public class AnnotatedDocument implements java.io.Serializable
         return true;
     }
 
+    /**
+     * Rename a version. Return true if successful.
+     * @param oldName
+     * @param newName
+     * @return
+     */
     public boolean renameAnnotationVersion(String oldName, String newName)
     {
         if (!versions.containsKey(oldName))

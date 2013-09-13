@@ -287,7 +287,7 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
                 i++)
         {
             ComplexEntityRule entityRule = complexEntityRules.get(i);
-            if (entityRule.getEntityRuleName().compareTo(name) == 0)
+            if (entityRule.getComplexEntityType().compareTo(name) == 0)
             {
                 String message =
                         String.format(
@@ -331,7 +331,7 @@ public class CreateComplexEntityRuleDialog extends javax.swing.JDialog
     private void myInitComponents()
     {
         ArrayList<String> annotationTypes =
-                new ArrayList(viewModel.getLabels().keySet());
+                new ArrayList(viewModel.getEntityTypes().keySet());
         Collections.sort(annotationTypes);
         for (String annotationType
                 : annotationTypes)

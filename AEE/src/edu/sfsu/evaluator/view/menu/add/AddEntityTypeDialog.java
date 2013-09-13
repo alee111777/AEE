@@ -6,45 +6,33 @@ package edu.sfsu.evaluator.view.menu.add;
 
 import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
+import edu.sfsu.util.io.InputValidator;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Dialog for adding new entity types.
  * @author eric
  */
-public class AddAnnotationTypeDialog extends javax.swing.JDialog
+public class AddEntityTypeDialog extends javax.swing.JDialog
 {
 
     private EvaluatorViewModel viewModel;
     private EvaluatorController controller;
-    private static final ArrayList<Character> WHITELIST;
 
-    static
-    {
-        WHITELIST = new ArrayList();
-        char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
-                toCharArray();
-        for (int i = 0;
-                i < alpha.length;
-                i++)
-        {
-            WHITELIST.add(alpha[i]);
-        }
-    }
 
     /**
-     * Creates new form AddAnnotationTypeDialog
+     * Creates new form AddEntityTypeDialog
      */
-    public AddAnnotationTypeDialog(EvaluatorViewModel viewModel,
+    public AddEntityTypeDialog(EvaluatorViewModel viewModel,
                                    EvaluatorController controller)
     {
         super(controller.getEvaluatorFrame(), true);
         initComponents();
         this.viewModel = viewModel;
         this.controller = controller;
+        // Set initial color to a random color.
         Random rand = new Random();
         float r = rand.nextFloat();
         float g = rand.nextFloat();
@@ -53,25 +41,12 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
         colorChooser.setColor(randomColor);
     }
 
-    private static boolean validateInput(String input)
-    {
-        for (int i = 0;
-                i < input.length();
-                i++)
-        {
-            if (WHITELIST.contains((Character) input.charAt(i)))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static void showAddAnnotationTypeDialog(
+    // Display this dialog
+    public static void showAddEntityTypeDialog(
             EvaluatorViewModel viewModel, EvaluatorController controller)
     {
-        AddAnnotationTypeDialog aDialog =
-                new AddAnnotationTypeDialog(viewModel, controller);
+        AddEntityTypeDialog aDialog =
+                new AddEntityTypeDialog(viewModel, controller);
         aDialog.setVisible(true);
     }
 
@@ -86,7 +61,7 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
     {
 
         colorChooser = new javax.swing.JColorChooser();
-        annotationTypeField = new javax.swing.JTextField();
+        entityTypeNameTextField = new javax.swing.JTextField();
         infoLabel = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         createButton = new javax.swing.JButton();
@@ -94,7 +69,7 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Add Annotation Type");
 
-        infoLabel.setText("Annotation Type: ");
+        infoLabel.setText("Entity Type Name");
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener()
@@ -128,7 +103,7 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationTypeField))
+                        .addComponent(entityTypeNameTextField))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(createButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -144,7 +119,7 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(9, 9, 9)
-                        .addComponent(annotationTypeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(entityTypeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -160,36 +135,39 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_createButtonActionPerformed
     {//GEN-HEADEREND:event_createButtonActionPerformed
-        String newAnnoType = annotationTypeField.getText();
-        if (newAnnoType == null)
+        // Get user entity type name from
+        String newEntityTypeName = entityTypeNameTextField.getText();
+        // Validate user input
+        if (newEntityTypeName == null)
         {
-            String message = "Invalid annotation type";
+            String message = "Invalid entity type";
             JOptionPane.showMessageDialog(this, message,
                                           "Naming Error",
                                           JOptionPane.ERROR_MESSAGE);
-        } else if (!validateInput(newAnnoType))
+        } else if (!InputValidator.isValidUserInput(newEntityTypeName))
         {
             String message =
-                    String.format("Invalid annotation type '%s'", newAnnoType);
+                    String.format("Invalid entitytype '%s'", newEntityTypeName);
             JOptionPane.showMessageDialog(this, message,
                                           "Naming Error",
                                           JOptionPane.ERROR_MESSAGE);
-        } else if (viewModel.getLabels().containsKey(newAnnoType))
+        } else if (viewModel.getEntityTypes().containsKey(newEntityTypeName))
         {
             String message =
-                    String.format("Already existing annotation type '%s'",
-                                  newAnnoType);
+                    String.format("Already existing entity type '%s'",
+                                  newEntityTypeName);
             JOptionPane.showMessageDialog(this, message,
                                           "Naming Error",
                                           JOptionPane.ERROR_MESSAGE);
         } else
         {
+            // If new entity type name checks out, add new entity type
             Color color = colorChooser.getColor();
             if (color == null)
             {
                 color = Color.BLACK;
             }
-            controller.requestLabelAdd(newAnnoType, color);
+            controller.requestEntityTypeAdd(newEntityTypeName, color);
             viewModel.repaintView();
             dispose();
         }
@@ -200,10 +178,10 @@ public class AddAnnotationTypeDialog extends javax.swing.JDialog
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField annotationTypeField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JColorChooser colorChooser;
     private javax.swing.JButton createButton;
+    private javax.swing.JTextField entityTypeNameTextField;
     private javax.swing.JLabel infoLabel;
     // End of variables declaration//GEN-END:variables
 }

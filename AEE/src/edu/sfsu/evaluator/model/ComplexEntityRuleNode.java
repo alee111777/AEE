@@ -5,8 +5,9 @@
 package edu.sfsu.evaluator.model;
 
 /**
- *
- * @author eric
+ * Complex Entity Rule Node is used to construct complex entity rules. Each
+ * node contains an entity type and if that entity type is optional.
+ * @author Eric Chiang
  */
 public class ComplexEntityRuleNode implements java.io.Serializable
 {

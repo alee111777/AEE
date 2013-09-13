@@ -10,22 +10,24 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 /**
- *
- * @author eric
+ * Info label right bellow the text screen in the main GUI. Displays which
+ * document version is being viewed by the text screen.
+ * @author Eric Chiang
  */
-public class EvaluatorInfo extends JLabel implements EvaluatorView
+public class EvaluatorInfoLabel extends JLabel implements EvaluatorView
 {
 
     private EvaluatorViewModel viewModel;
     private EvaluatorController controller;
-    private boolean docLoaded = false;
-    private String docName = null;
-    private String verName = null;
-    protected static final String initialMessage =
+    private boolean isDisplaying = false;
+    // Displayed document version
+    private String displayedDocName = null;
+    private String displayedVerName = null;
+    protected static final String INITIAL_MESSAGE =
             "[INFO] No workspace declared. "
             + "Use File -> Set Workspace to declare workspace";
 
-    public EvaluatorInfo(EvaluatorViewModel viewModel,
+    public EvaluatorInfoLabel(EvaluatorViewModel viewModel,
                          EvaluatorController controller)
     {
         this.viewModel = viewModel;
@@ -33,97 +35,125 @@ public class EvaluatorInfo extends JLabel implements EvaluatorView
         repaintView();
     }
 
+    /**
+     * Display the name of the specific document version in the info label.
+     * @param displayedDocName
+     * @param displayedVerName
+     */
     @Override
     public void display(String docName, String verName)
     {
-        docLoaded = true;
-        this.docName = docName;
-        this.verName = verName;
+        isDisplaying = true;
+        displayedDocName = docName;
+        displayedVerName = verName;
         repaintView();
     }
 
     /**
      * Is this document being displayed?
      * <p/>
-     * @param docName
+     * @param displayedDocName
      * @return
      */
     public boolean isDisplaying(String docName)
     {
-        if (!docLoaded)
+        if (!isDisplaying)
         {
             return false;
         }
-        return (this.docName.compareTo(docName) == 0);
+        return (this.displayedDocName.compareTo(docName) == 0);
     }
 
     /**
      * Is this document version being displayed?
      * <p/>
-     * @param docName
-     * @param verName
+     * @param displayedDocName
+     * @param displayedVerName
      * @return
      */
     public boolean isDisplaying(String docName, String verName)
     {
-        if (!docLoaded)
+        if (!isDisplaying)
         {
             return false;
         }
-        return ((this.docName.compareTo(docName) == 0)
-                && (this.verName.compareTo(verName) == 0));
+        return ((this.displayedDocName.compareTo(docName) == 0)
+                && (this.displayedVerName.compareTo(verName) == 0));
     }
 
+    /**
+     * If displayed document version is renamed record that change.
+     * @param docName
+     * @param oldVerName
+     * @param newVerName
+     */
     @Override
     public void updateDocumentVersionRenamed(String docName, String oldVerName,
                                              String newVerName)
     {
         if (isDisplaying(docName, oldVerName))
         {
-            verName = newVerName;
+            displayedVerName = newVerName;
             repaintView();
         }
     }
 
+    /**
+     * When model is set, repaint the view.
+     */
     @Override
     public void updateModelSet()
     {
         repaintView();
     }
 
+    /**
+     * Re-render the label to reflect the current document version being
+     * displayed.
+     */
     @Override
     public void repaintView()
     {
-        if (!viewModel.isModelLoaded())
+        // If the model has not been set just display initial message
+        if (!viewModel.isModelSet())
         {
-            this.setText(initialMessage);
+            this.setText(INITIAL_MESSAGE);
             setForeground(Color.gray);
             return;
         }
+
+        // show workspace
         String workspace = viewModel.getWorkspacePath();
-        if (!viewModel.containsDocumentVersion(docName, verName))
+        // Determine if displayed document version still exists
+        if (!viewModel.containsDocumentVersion(displayedDocName, displayedVerName))
         {
-            docLoaded = false;
+            isDisplaying = false;
         }
         String message;
-        if (docLoaded)
+        if (isDisplaying)
         {
             message = String.format(
                     "[INFO] Workspace: (%s)   Document: (%s)   Version: (%s)",
-                    workspace, docName, verName);
+                    workspace, displayedDocName, displayedVerName);
         } else
         {
             message = String.format("[INFO] Workspace: %s", workspace);
         }
+        // Set the text
         setText(message);
     }
 
+    /**
+     * If displayed document is renamed record that change.
+     * @param oldDocName
+     * @param newDocName
+     */
     @Override
     public void updateDocuentRenamed(String oldDocName, String newDocName)
     {
         if (isDisplaying(oldDocName))
         {
-            docName = newDocName;
+            displayedDocName = newDocName;
 
         }
     }

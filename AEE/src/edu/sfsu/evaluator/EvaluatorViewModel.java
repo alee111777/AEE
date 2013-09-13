@@ -14,19 +14,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
- * @author eric
+ * Class which allows views to get information about the model, and in turn
+ * allows the model to update the view.
+ * @author Eric Chiang
  */
 public class EvaluatorViewModel
 {
 
-    public final static String NO_MODEL_LOADED = "No workspace declared!";
+    public final static String MODEL_NOT_SET = "No workspace declared!";
     private ArrayList<EvaluatorView> views;
     private EvaluatorModel model;
-    private boolean modelLoaded = false;
+    private boolean isModelSet = false;
+    /*
+     * Highlight information. Easier to store which entities aren't highlighted
+     * than the ones that are. This way when new entities are created, they're
+     * automatically be considered highlighted.
+     */
     private ArrayList<String> unHighlightedEntityTypes;
     private ArrayList<String> unHighlightedEntityRules;
 
+    /**
+     * Initiate view model
+     */
     public EvaluatorViewModel()
     {
         views = new ArrayList();
@@ -34,26 +43,31 @@ public class EvaluatorViewModel
         unHighlightedEntityRules = new ArrayList();
     }
 
-    public EvaluatorViewModel(EvaluatorModel model)
-    {
-        views = new ArrayList();
-        unHighlightedEntityTypes = new ArrayList();
-        unHighlightedEntityRules = new ArrayList();
-        this.model = model;
-        modelLoaded = true;
-    }
-
+    /**
+     * Attach a view. This will allow the ViewModel to update that view.
+     * @param view
+     */
     public void attachView(EvaluatorView view)
     {
         views.add(view);
     }
 
-    public boolean containsDocument(
-            String docName)
+    /**
+     * Does the model contain a specific document?
+     * @param docName
+     * @return
+     */
+    public boolean containsDocument(String docName)
     {
         return model.containsDocument(docName);
     }
 
+    /**
+     * Does the model contain a specific document version?
+     * @param docName
+     * @param verName
+     * @return
+     */
     public boolean containsDocumentVersion(
             String docName,
             String verName)
@@ -61,13 +75,20 @@ public class EvaluatorViewModel
         return model.containsDocumentVersion(docName, verName);
     }
 
+    /**
+     * Detach a view.
+     * @param view
+     */
     public void detachView(EvaluatorView view)
     {
         views.remove(view);
     }
 
     /**
-     * Notify view that a document has been renamed.
+     * Called by the model to notify view that a document has been renamed. This
+     * is necessary for View element which display information relevant to a
+     * specific document. For example the Entity tree. Those View elements need
+     * to know what docName to use to request new information when repainting.
      * <p/>
      * @param oldDocName
      * @param newDocName
@@ -76,15 +97,18 @@ public class EvaluatorViewModel
             String oldDocName,
             String newDocName)
     {
-        for (EvaluatorView view
-                : views)
+        for (EvaluatorView view : views)
         {
             view.updateDocuentRenamed(oldDocName, newDocName);
         }
     }
 
     /**
-     * Notify view that a document version has been renamed.
+     * Called by the model to notify view that a document version has been
+     * renamed. This is necessary for View element which display information
+     * relevant to a specific document version. For example the Entity tree.
+     * Those View elements need to know what verName to use to request new '
+     * information when repainting.
      * <p/>
      * @param docName
      * @param oldVerName
@@ -103,7 +127,7 @@ public class EvaluatorViewModel
     }
 
     /**
-     * Model getters. View may request information from model.
+     * Model getters. For view to request information from model.
      */
     public ArrayList<Entity> getEntities(
             String docName,
@@ -144,7 +168,7 @@ public class EvaluatorViewModel
         return model.getDocumentText(docName);
     }
 
-    public HashMap<String, Color> getLabels()
+    public HashMap<String, Color> getEntityTypes()
     {
         return model.getEntityTypes();
     }
@@ -158,13 +182,13 @@ public class EvaluatorViewModel
      */
 
     /**
-     * Determine highlight state of a complex entity rule.
-     * @param complexEntityRuleName
+     * Determine highlight state of a complex entity type.
+     * @param complexEntityType
      * @return
      */
-    public boolean isComplexEntityRuleHighlighted(String complexEntityRuleName)
+    public boolean isComplexEntityTypeHighlighted(String complexEntityType)
     {
-        return !unHighlightedEntityRules.contains(complexEntityRuleName);
+        return !unHighlightedEntityRules.contains(complexEntityType);
     }
 
     /**
@@ -177,53 +201,75 @@ public class EvaluatorViewModel
         return !unHighlightedEntityTypes.contains(entityType);
     }
 
-    public boolean isModelLoaded()
+    public boolean isModelSet()
     {
-        return modelLoaded;
+        return isModelSet;
     }
 
+    /**
+     * Repaint all view elements. This will cause them to re-request data from
+     * the model and change to reflect any changes since the last repaint.
+     */
     public void repaintView()
     {
-        for (EvaluatorView view
-                : views)
+        for (EvaluatorView view : views)
         {
             view.repaintView();
         }
     }
 
+    /**
+     * Called by the controller to set the EvaluatorModel for which this
+     * class communicates with.
+     * @param model
+     */
     public void setModel(EvaluatorModel model)
     {
         this.model = model;
-        modelLoaded = true;
+        isModelSet = true;
         unHighlightedEntityTypes.clear();
         unHighlightedEntityRules.clear();
-        for (EvaluatorView view
-                : views)
+        for (EvaluatorView view : views)
         {
             view.updateModelSet();
         }
     }
 
-    public void setEntityTypeHighlight(String label, boolean highlighted)
+    /**
+     * Set the highlight policy of a specific entity type. That information is
+     * stored in the class, and is accessed by the View elements through
+     * <code>isEntityTypeHighlighted()</code> when they are repainted.
+     * @param entityType
+     * @param highlighted
+     */
+    public void setEntityTypeHighlight(String entityType, boolean highlighted)
     {
         if (highlighted)
         {
-            unHighlightedEntityTypes.remove(label);
+            unHighlightedEntityTypes.remove(entityType);
         } else
         {
-            unHighlightedEntityTypes.add(label);
+            unHighlightedEntityTypes.add(entityType);
         }
     }
 
-    public void setComplexEntityRuleHighlighted(String entityName,
+    /**
+     * Set the highlight policy of a specific complex entity type. That
+     * information is stored in the class, and is accessed by the View elements
+     * through <code>isComplexEntityTypeHighlighted()</code> when they are
+     * repainted.
+     * @param complexEntityType
+     * @param highlighted
+     */
+    public void setComplexEntityRuleHighlighted(String complexEntityType,
                                                 boolean highlighted)
     {
         if (highlighted)
         {
-            unHighlightedEntityRules.remove(entityName);
+            unHighlightedEntityRules.remove(complexEntityType);
         } else
         {
-            unHighlightedEntityRules.add(entityName);
+            unHighlightedEntityRules.add(complexEntityType);
         }
     }
 }

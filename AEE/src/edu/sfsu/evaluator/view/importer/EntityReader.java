@@ -11,17 +11,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Read entities from IBM internal format. Speak to Su Yan for details.
  * @author eric
  */
-public class AnnotationReader
+public class EntityReader
 {
 
-    public static ArrayList<Entity> readAnnotations(String filePath,
+    public static ArrayList<Entity> readEntities(String filePath,
                                                     String docText, String label)
             throws FileNotFoundException
     {
-        String text = edu.sfsu.io.FileReader.getTextFromFile(filePath);
+        String text = edu.sfsu.util.FileUtilities.getTextFromFile(filePath);
         ArrayList<Entity> annotations = new ArrayList();
 
         String annotationRegex = "\\{\"locations\"\\:\\[((?:\\[\\d+,\\d+\\],?)+)\\],\"match\"\\:\"([\\w ]+)\"";

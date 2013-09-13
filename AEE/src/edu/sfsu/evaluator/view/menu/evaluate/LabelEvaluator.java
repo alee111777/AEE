@@ -58,7 +58,7 @@ public class LabelEvaluator extends javax.swing.JDialog
                 viewModel.getAvailableDocumentVersions(docName);
         labelTabbedPane.removeAll();
         ArrayList<String> labels =
-                new ArrayList(viewModel.getLabels().keySet());
+                new ArrayList(viewModel.getEntityTypes().keySet());
         Collections.sort(labels);
         for (String label
                 : labels)
