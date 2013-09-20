@@ -10,6 +10,9 @@ package edu.sfsu.util.io;
  */
 public class InputValidator
 {
+    /**
+     * String of valid characters for input comparison
+     */
     private final static String WHITE_LIST =
             "abcdefghijklmnopqrstuvwxyz" +
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
@@ -21,18 +24,21 @@ public class InputValidator
      * Ensures that user input is only alpha numeric, has no leading or trailing
      * space, contains at least one character, and has no sequences of spaces
      * longer than one.
-     * @param userInput
-     * @return
+     * @param userInput String
+     * @return boolean
      */
     public static boolean isValidUserInput(String userInput)
     {
-        boolean lastCharWasSpace = true;
+        boolean lastCharWasSpace = false;
         for (int i = 0; i < userInput.length(); i++)
         {
             String s = userInput.substring(i, i + 1);
+            
+            //check for spaces, make sure space is valid.
             if (s.compareTo(" ") == 0)
             {
-                if (lastCharWasSpace)
+                if (lastCharWasSpace || i == userInput.length() - 1 ||
+                        i == 0)
                 {
                     return false;
                 } else
@@ -41,13 +47,15 @@ public class InputValidator
                 }
             } else
             {
+                lastCharWasSpace = false;
                 if (!WHITE_LIST.contains(s))
                 {
                     return false;
                 }
             }
         }
-        // If the last char was a space the string will be rejected.
-        return !lastCharWasSpace;
+  
+        //userInput survived the test, return true.
+        return true;
     }
 }

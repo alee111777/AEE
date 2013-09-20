@@ -206,9 +206,10 @@ public class EvaluatorModel
      * Does this model contain entity document named docName, with entity version named
      * verName?
      * <p/>
-     * @param docName
-     * @param verName
-     * @return
+     * @param docName - String
+     * @param verName - String
+     * @return string that is the document name, false if document version
+     * does not exist.
      */
     public boolean containsDocumentVersion(String docName, String verName)
     {

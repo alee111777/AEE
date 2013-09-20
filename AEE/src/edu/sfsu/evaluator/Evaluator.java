@@ -11,6 +11,13 @@ import javax.swing.UIManager;
  *
  * @author eric
  */
+
+/**
+ * Evaluator initializes the EvaluatorController
+ * 
+ * -working on "set UI look and feel
+ * @author anthony
+ */
 public class Evaluator
 {
 
