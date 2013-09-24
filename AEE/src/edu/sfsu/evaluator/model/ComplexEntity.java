@@ -58,8 +58,8 @@ public class ComplexEntity implements java.io.Serializable,
     /**
      * Complex entities are equivalent if their data fields are equal.
      * Essentially tests for weak equivalence.
-     * @param o
-     * @return
+     * @param o Object
+     * @return boolean
      */
     @Override
     public boolean equals(Object o)
@@ -93,7 +93,7 @@ public class ComplexEntity implements java.io.Serializable,
 
     /**
      * compareTo only compares the subEntities of both complex entities.
-     * @param o
+     * @param o Object
      * @return
      */
     @Override
