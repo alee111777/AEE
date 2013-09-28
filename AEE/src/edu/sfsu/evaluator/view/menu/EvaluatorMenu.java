@@ -470,7 +470,7 @@ public class EvaluatorMenu extends JMenuBar
     /**
      * Evaluate --> measurements button pressed.
      */
-    private void buttonPressedEvaluateMeasurements()
+    public void buttonPressedEvaluateMeasurements()
     {
         if (!viewModel.isModelSet())
         {
@@ -480,6 +480,22 @@ public class EvaluatorMenu extends JMenuBar
         // Display measurements dialog
         MeasurementEvaluatorDialog.showMeasurementEvaluatorDialog(
                 viewModel, controller);
+    }
+    
+    /**
+     * Evaluate --> measurements button pressed. with docName at
+     * default for Documents in dialog box
+     */
+    public void evaluateMeasurements(String docName)
+    {
+        if (!viewModel.isModelSet())
+        {
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
+            return;
+        }
+        // Display measurements dialog
+        MeasurementEvaluatorDialog.showMeasurementEvaluatorDialogWithDoc(
+                viewModel, controller, docName);
     }
 
     /**

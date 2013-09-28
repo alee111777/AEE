@@ -351,6 +351,18 @@ public class EvaluatorCorpusTree extends JTree implements EvaluatorView
                 }
             });
             this.add(deleteMenuItem);
+            
+            // calc menu item
+            JMenuItem calcMenuItem = new JMenuItem("Calculate Measurements");
+            calcMenuItem.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    controller.requestEvaluateMeasurement(docName);
+                }
+            });
+            this.add(calcMenuItem);
 
             // Stop automatic tree selection on popup display
             this.addPopupMenuListener(new PopupMenuListener()

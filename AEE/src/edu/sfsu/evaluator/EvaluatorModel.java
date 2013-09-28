@@ -544,7 +544,7 @@ public class EvaluatorModel
         checkDocument(oldDocName, true);
         checkDocument(newDocName, false);
         documents.put(newDocName, documents.remove(oldDocName));
-        viewModel.fireDocuentRenamed(oldDocName, newDocName);
+        viewModel.fireDocumentRenamed(oldDocName, newDocName);
     }
 
     /**

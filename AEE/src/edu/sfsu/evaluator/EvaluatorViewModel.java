@@ -93,7 +93,7 @@ public class EvaluatorViewModel
      * @param oldDocName
      * @param newDocName
      */
-    public void fireDocuentRenamed(
+    public void fireDocumentRenamed(
             String oldDocName,
             String newDocName)
     {

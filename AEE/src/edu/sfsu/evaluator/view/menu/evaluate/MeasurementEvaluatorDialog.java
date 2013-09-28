@@ -37,6 +37,22 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
         myInitComponents();
         this.setSize(500, 300);
     }
+    
+    /**
+     * Creates new form MeasurementEvaluatorDialog with docName
+     *  at the default setting for Document pull down menu
+     */
+    public MeasurementEvaluatorDialog(
+            EvaluatorViewModel viewModel,
+            EvaluatorController controller, String docName)
+    {
+        super(controller.getEvaluatorFrame(), true);
+        this.viewModel = viewModel;
+        this.controller = controller;
+        initComponents();
+        myInitComponents(docName);
+        this.setSize(500, 300);
+    }
 
     private void myInitComponents()
     {
@@ -46,6 +62,36 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
         for (String docName : docNames)
         {
             docComboBox.addItem(docName);
+        }
+        docComboBox.repaint();
+        populateVerComboBox();
+        nameOfSelectedDoc = (String) docComboBox.getSelectedItem();
+        docComboBox.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                String newDocName = (String) docComboBox.getSelectedItem();
+                if (nameOfSelectedDoc.compareTo(newDocName) != 0)
+                {
+                    // Change value of verComboBox
+                    nameOfSelectedDoc = newDocName;
+                    populateVerComboBox();
+                }
+            }
+        });
+    }
+    
+    private void myInitComponents(String firstDoc)
+    {
+        // Populate docComboBox with document names
+        ArrayList<String> docNames = viewModel.getAvailableDocuments();
+        Collections.sort(docNames);
+        docComboBox.addItem(firstDoc);
+        for (String docName : docNames)
+        {
+            if (!docName.matches(firstDoc))
+                docComboBox.addItem(docName);
         }
         docComboBox.repaint();
         populateVerComboBox();
@@ -102,6 +148,23 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
     {
         MeasurementEvaluatorDialog eDialog =
                 new MeasurementEvaluatorDialog(viewModel, controller);
+        eDialog.setVisible(true);
+    }
+    
+    
+    /**
+     * Display this dialog. with docName as the first document in
+     * Documents drop down menu.
+     * @param viewModel EvaluatorViewModel
+     * @param controller EvaluatorController
+     * @param docName String
+     */
+    public static void showMeasurementEvaluatorDialogWithDoc(
+            EvaluatorViewModel viewModel,
+            EvaluatorController controller, String docName)
+    {
+        MeasurementEvaluatorDialog eDialog =
+                new MeasurementEvaluatorDialog(viewModel, controller, docName);
         eDialog.setVisible(true);
     }
 

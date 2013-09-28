@@ -775,6 +775,14 @@ public class EvaluatorController
             showErrorMessage(message);
         }
     }
+    
+    /**
+     * request evaluate measurement process.
+     *  toggles opening of measurement dialog box
+     */
+    public void requestEvaluateMeasurement(String docName) {
+        evaluatorMenuBar.evaluateMeasurements(docName);
+    }
 
     /**
      * Set preference for text screen.
