@@ -4,14 +4,14 @@
  */
 package edu.sfsu.evaluator;
 
-import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.evaluator.model.ComplexEntity;
 import edu.sfsu.evaluator.model.ComplexEntityRule;
+import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.evaluator.view.EvaluatorInfoLabel;
 import edu.sfsu.evaluator.view.menu.EvaluatorMenu;
 import edu.sfsu.evaluator.view.text.EvaluatorTextScreen;
-import edu.sfsu.evaluator.view.tree.EvaluatorEntityTree;
 import edu.sfsu.evaluator.view.tree.EvaluatorCorpusTree;
+import edu.sfsu.evaluator.view.tree.EvaluatorEntityTree;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridBagConstraints;

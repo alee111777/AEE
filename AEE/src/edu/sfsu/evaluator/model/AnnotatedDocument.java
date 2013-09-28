@@ -54,7 +54,7 @@ public class AnnotatedDocument implements java.io.Serializable
 
     /**
      * Get a version by name.
-     * @param name
+     * @param name String
      * @return
      */
     public AnnotatedDocumentVersion getAnnotationVersion(String name)
