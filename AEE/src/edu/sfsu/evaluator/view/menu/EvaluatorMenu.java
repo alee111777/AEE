@@ -486,7 +486,7 @@ public class EvaluatorMenu extends JMenuBar
      * Evaluate --> measurements button pressed. with docName at
      * default for Documents in dialog box
      */
-    public void evaluateMeasurements(String docName)
+    public void buttonPressedEvaluateMeasurements(String docName)
     {
         if (!viewModel.isModelSet())
         {
@@ -494,7 +494,7 @@ public class EvaluatorMenu extends JMenuBar
             return;
         }
         // Display measurements dialog
-        MeasurementEvaluatorDialog.showMeasurementEvaluatorDialogWithDoc(
+        MeasurementEvaluatorDialog.showMeasurementEvaluatorDialog(
                 viewModel, controller, docName);
     }
 

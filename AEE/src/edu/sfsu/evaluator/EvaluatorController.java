@@ -781,7 +781,7 @@ public class EvaluatorController
      *  toggles opening of measurement dialog box
      */
     public void requestEvaluateMeasurement(String docName) {
-        evaluatorMenuBar.evaluateMeasurements(docName);
+        evaluatorMenuBar.buttonPressedEvaluateMeasurements(docName);
     }
 
     /**

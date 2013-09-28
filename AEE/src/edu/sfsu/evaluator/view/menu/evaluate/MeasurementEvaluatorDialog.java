@@ -159,7 +159,7 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
      * @param controller EvaluatorController
      * @param docName String
      */
-    public static void showMeasurementEvaluatorDialogWithDoc(
+    public static void showMeasurementEvaluatorDialog(
             EvaluatorViewModel viewModel,
             EvaluatorController controller, String docName)
     {
