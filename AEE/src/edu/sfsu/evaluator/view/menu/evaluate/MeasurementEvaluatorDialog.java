@@ -88,6 +88,9 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
         ArrayList<String> docNames = viewModel.getAvailableDocuments();
         Collections.sort(docNames);
         docComboBox.addItem(firstDoc);
+        
+
+        
         for (String docName : docNames)
         {
             if (!docName.matches(firstDoc))

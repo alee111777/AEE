@@ -47,7 +47,7 @@ public class EvaluatorController
     private EvaluatorEntityTree evaluatorEntityTree;
     private EvaluatorTextScreen evaluatorTextScreen;
     private EvaluatorInfoLabel evaluatorInfoBar;
-    private EvaluatorMenu evaluatorMenuBar;
+    private EvaluatorMenu evaluatorMenu;
     private JFrame evaluatorViewFrame;
 
     public EvaluatorController()
@@ -65,8 +65,8 @@ public class EvaluatorController
         evaluatorEntityTree = new EvaluatorEntityTree(viewModel, this);
         evaluatorTextScreen = new EvaluatorTextScreen(viewModel, this);
         evaluatorInfoBar = new EvaluatorInfoLabel(viewModel, this);
-        evaluatorMenuBar = new EvaluatorMenu(viewModel, this);
-        evaluatorViewFrame.setJMenuBar(evaluatorMenuBar);
+        evaluatorMenu = new EvaluatorMenu(viewModel, this);
+        evaluatorViewFrame.setJMenuBar(evaluatorMenu);
 
         // Attach views to the View Model
         viewModel.attachView(evaluatorCorpusTree);
@@ -83,14 +83,14 @@ public class EvaluatorController
         /**
          * Add action listeners to buttons.
          * To prevent rewriting code these action listeners call
-         * evaluatorMenuBar methods which already implement the same actions.
+         * evaluatorMenu methods which already implement the same actions.
          */
         addFileButton.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenuBar.buttonPressedFileAddFiles();
+                evaluatorMenu.buttonPressedFileAddFiles();
             }
         });
         addDirButton.addActionListener(new ActionListener()
@@ -98,7 +98,7 @@ public class EvaluatorController
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenuBar.buttonPressedFileAddDirs();
+                evaluatorMenu.buttonPressedFileAddDirs();
             }
         });
         addEntityType.addActionListener(new ActionListener()
@@ -106,7 +106,7 @@ public class EvaluatorController
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenuBar.buttonPressedAddEntityType();
+                evaluatorMenu.buttonPressedAddEntityType();
             }
         });
         addComplexEntityRule.addActionListener(new ActionListener()
@@ -114,7 +114,7 @@ public class EvaluatorController
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                evaluatorMenuBar.buttonPressedAddComplexEntityRule();
+                evaluatorMenu.buttonPressedAddComplexEntityRule();
             }
         });
 
@@ -781,7 +781,7 @@ public class EvaluatorController
      *  toggles opening of measurement dialog box
      */
     public void requestEvaluateMeasurement(String docName) {
-        evaluatorMenuBar.buttonPressedEvaluateMeasurements(docName);
+        evaluatorMenu.buttonPressedEvaluateMeasurements(docName);
     }
 
     /**
