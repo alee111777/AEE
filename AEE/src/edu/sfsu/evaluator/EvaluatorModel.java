@@ -6,9 +6,9 @@ package edu.sfsu.evaluator;
 
 import edu.sfsu.evaluator.exceptions.BadModelRequestException;
 import edu.sfsu.evaluator.model.AnnotatedDocument;
-import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.evaluator.model.ComplexEntity;
 import edu.sfsu.evaluator.model.ComplexEntityRule;
+import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.util.FileUtilities;
 import edu.sfsu.util.io.Serializer;
 import java.awt.Color;
