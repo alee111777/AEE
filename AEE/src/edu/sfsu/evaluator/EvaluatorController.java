@@ -704,6 +704,28 @@ public class EvaluatorController
             showErrorMessage(e);
         }
     }
+    
+    /**
+     * Request to add an entity type to the evaluator Model with a random color.
+     * <p/>
+     * @param entityTypeName
+     */
+    public void requestEntityTypeAddFromFile(
+            String entityTypeName)
+    {
+        try
+        {
+            Random rand = new Random();
+            float r = rand.nextFloat();
+            float g = rand.nextFloat();
+            float b = rand.nextFloat();
+            Color randomColor = new Color(r, g, b);
+            evaluatorModel.requestEntityTypeAddFromFile(entityTypeName, randomColor);
+        } catch (Exception e)
+        {
+            showErrorMessage(e);
+        }
+    }
 
     /**
      * Request to change the color of a entity type within the evaluatorModel.

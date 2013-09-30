@@ -251,8 +251,9 @@ public class ImportDialogSWING extends javax.swing.JDialog
             for (Entity a
                     : annotations)
             {
-                controller.requestEntityTypeAdd(a.getEntityType());
+                controller.requestEntityTypeAddFromFile(a.getEntityType());
                 controller.requestAddEntity(docName, verName, a);
+                
             }
             viewModel.repaintView();
         } catch (Exception e)

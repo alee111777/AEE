@@ -615,6 +615,21 @@ public class EvaluatorModel
         }
         entityTypes.put(entityType, color);
     }
+    
+    /**
+     * Request to add a new entity type from file.
+     * E.G. "illness", "name", "noun"
+     * @param entityType
+     * @param color
+     * @throws BadModelRequestException
+     */
+    public void requestEntityTypeAddFromFile(
+            String entityType,
+            Color color)
+            throws BadModelRequestException
+    {
+        entityTypes.put(entityType, color);
+    }
 
     public void requestEntityTypeColorChange(
             String entityType,
