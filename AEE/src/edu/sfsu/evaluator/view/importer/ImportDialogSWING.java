@@ -39,15 +39,6 @@ public class ImportDialogSWING extends javax.swing.JDialog
         initComponents();
 
         this.setTitle("IMPORT");
-        ArrayList<String> labelNames =
-                new ArrayList(viewModel.getEntityTypes().keySet());
-
-        Collections.sort(labelNames);
-        for (String labelName
-                : labelNames)
-        {
-            labelComboBox.addItem(labelName);
-        }
 
         ArrayList<String> docNames =
                 new ArrayList(viewModel.getAvailableDocuments());
@@ -106,9 +97,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
         jLabel1 = new javax.swing.JLabel();
         docComboBox = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         verComboBox = new javax.swing.JComboBox();
-        labelComboBox = new javax.swing.JComboBox();
         browseButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         fileTextField = new javax.swing.JTextField();
@@ -128,8 +117,6 @@ public class ImportDialogSWING extends javax.swing.JDialog
         });
 
         jLabel2.setText("Version");
-
-        jLabel3.setText("Annotaiton Type");
 
         browseButton.setText("Browse");
         browseButton.addActionListener(new java.awt.event.ActionListener()
@@ -171,7 +158,6 @@ public class ImportDialogSWING extends javax.swing.JDialog
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(okButton)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -184,7 +170,6 @@ public class ImportDialogSWING extends javax.swing.JDialog
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(docComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(verComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labelComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(fileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(browseButton)))
@@ -201,11 +186,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(verComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton)
@@ -252,23 +233,25 @@ public class ImportDialogSWING extends javax.swing.JDialog
         {
             String docName = (String) docComboBox.getSelectedItem();
             String verName = (String) verComboBox.getSelectedItem();
-            String label = (String) labelComboBox.getSelectedItem();
-            if ((docName == null) || (verName == null) || (label == null))
+            if ((docName == null) || (verName == null))
             {
                 return;
             }
 
-            String docText = viewModel.getDocumentText(docName);
             String filePath = fileTextField.getText();
+            
+            System.out.println(filePath);
+            
             if (filePath.compareTo(INITIAL_MESSAGE) == 0)
             {
                 return;
             }
             ArrayList<Entity> annotations =
-                    EntityReader.readEntities(filePath, docText, label);
+                    EntityReader.readEntities(filePath);
             for (Entity a
                     : annotations)
             {
+                controller.requestEntityTypeAdd(a.getEntityType());
                 controller.requestAddEntity(docName, verName, a);
             }
             viewModel.repaintView();
@@ -299,9 +282,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
     private javax.swing.JTextField fileTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JComboBox labelComboBox;
     private javax.swing.JButton okButton;
     private javax.swing.JComboBox verComboBox;
     // End of variables declaration//GEN-END:variables

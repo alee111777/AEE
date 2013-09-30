@@ -264,7 +264,7 @@ public class ImportDialog extends JDialog
             }
             // Use entity reader to read entities from file.
             ArrayList<Entity> entities =
-                    EntityReader.readEntities(filePath, docText, entityType);
+                    EntityReader.readEntities(filePath);
             for (Entity e : entities)
             {
                 controller.requestAddEntity(docName, verName, e);
