@@ -433,6 +433,18 @@ public class EvaluatorCorpusTree extends JTree implements EvaluatorView
                 }
             });
             this.add(deleteMenuItem);
+            
+            // Delete menu item
+            JMenuItem importMenuItem = new JMenuItem("Import Entities");
+            importMenuItem.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    controller.requestImport(docName, verName);
+                }
+            });
+            this.add(importMenuItem);
 
             // Stop automatic tree selection on popup display
             this.addPopupMenuListener(new PopupMenuListener()

@@ -392,7 +392,7 @@ public class EvaluatorMenu extends JMenuBar
     /**
      * File --> Import button pressed.
      */
-    private void buttonPressedFileImport()
+    public void buttonPressedFileImport()
     {
         if (!viewModel.isModelSet())
         {
@@ -402,6 +402,22 @@ public class EvaluatorMenu extends JMenuBar
 
         // Display import dialog
         ImportDialogSWING.showImportDialog(viewModel, controller);
+    }
+    
+    /**
+     * Import popup menu item selected.
+     */
+    public void buttonPressedFileImport(String docName, String verName)
+    {
+        if (!viewModel.isModelSet())
+        {
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
+            return;
+        }
+
+        // Display import dialog with docName and verName at top of combo boxes
+        ImportDialogSWING.showImportDialog(
+                viewModel, controller, docName, verName);
     }
 
     /**

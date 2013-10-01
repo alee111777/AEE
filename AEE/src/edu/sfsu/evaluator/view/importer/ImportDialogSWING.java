@@ -38,7 +38,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
         this.controller = controller;
         initComponents();
 
-        this.setTitle("IMPORT");
+        this.setTitle("Import");
 
         ArrayList<String> docNames =
                 new ArrayList(viewModel.getAvailableDocuments());
@@ -56,6 +56,18 @@ public class ImportDialogSWING extends javax.swing.JDialog
     {
         ImportDialogSWING importDialog = new ImportDialogSWING(viewModel,
                                                                controller);
+        importDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        importDialog.setVisible(true);
+    }
+    
+    public static void showImportDialog(
+            EvaluatorViewModel viewModel,EvaluatorController controller,
+            String docName, String verName)
+    {
+        ImportDialogSWING importDialog = new ImportDialogSWING(viewModel,
+                                                               controller);
+        importDialog.reorderDocComboBox(docName);
+        importDialog.reorderVerComboBox(verName);
         importDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         importDialog.setVisible(true);
     }
@@ -81,6 +93,47 @@ public class ImportDialogSWING extends javax.swing.JDialog
         } catch (Exception e)
         {
             controller.showErrorMessage("Error populating ver combo box");
+        }
+        
+    }
+    
+    public void reorderVerComboBox(String firstVerName) {
+        verComboBox.removeAllItems();
+        String docName = (String) docComboBox.getSelectedItem();
+        if (docName == null)
+        {
+            return;
+        }
+        try
+        {
+            verComboBox.removeAllItems();
+            ArrayList<String> verNames =
+                    viewModel.getAvailableDocumentVersions(docName);
+            Collections.sort(verNames);
+            verComboBox.addItem(firstVerName);
+            for (String verName
+                    : verNames)
+            {
+                if (!verName.matches(firstVerName))
+                    verComboBox.addItem(verName);
+            }
+        } catch (Exception e)
+        {
+            controller.showErrorMessage("Error populating ver combo box");
+        }
+    }
+    
+    public void reorderDocComboBox(String firstDocName) {
+        //docComboBox.removeAllItems();
+        ArrayList<String> docNames =
+                new ArrayList(viewModel.getAvailableDocuments());
+        Collections.sort(docNames);
+        docComboBox.addItem(firstDocName);
+        for (String docName
+                : docNames)
+        {
+            if (!docName.matches(firstDocName))
+                docComboBox.addItem(docName);
         }
     }
 
@@ -211,7 +264,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
         {
             fc = new JFileChooser();
         }
-        fc.setFileFilter(new FileNameExtensionFilter("Text file", "txt"));
+        fc.setFileFilter(new FileNameExtensionFilter("XML file", "xml"));
         fc.setMultiSelectionEnabled(false);
         int returnVal = fc.showOpenDialog(this);
 

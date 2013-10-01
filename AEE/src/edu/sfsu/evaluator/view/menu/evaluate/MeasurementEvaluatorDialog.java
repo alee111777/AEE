@@ -82,18 +82,15 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
         });
     }
     
-    private void myInitComponents(String firstDoc)
+    private void myInitComponents(String firstDocName)
     {
         // Populate docComboBox with document names
         ArrayList<String> docNames = viewModel.getAvailableDocuments();
         Collections.sort(docNames);
-        docComboBox.addItem(firstDoc);
-        
-
-        
+        docComboBox.addItem(firstDocName);
         for (String docName : docNames)
         {
-            if (!docName.matches(firstDoc))
+            if (!docName.matches(firstDocName))
                 docComboBox.addItem(docName);
         }
         docComboBox.repaint();

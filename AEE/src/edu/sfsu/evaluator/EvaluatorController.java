@@ -805,6 +805,10 @@ public class EvaluatorController
     public void requestEvaluateMeasurement(String docName) {
         evaluatorMenu.buttonPressedEvaluateMeasurements(docName);
     }
+    
+    public void requestImport(String docName, String verName) {
+        evaluatorMenu.buttonPressedFileImport(docName, verName);
+    }
 
     /**
      * Set preference for text screen.
