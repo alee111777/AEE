@@ -4,6 +4,7 @@
  */
 package edu.sfsu.evaluator.view.importer;
 
+import edu.sfsu.util.io.EntityReader;
 import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
 import edu.sfsu.evaluator.model.Entity;

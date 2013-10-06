@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.sfsu.evaluator.view.importer;
+package edu.sfsu.util.io;
 
 import edu.sfsu.evaluator.model.Entity;
 import java.io.FileNotFoundException;

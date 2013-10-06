@@ -4,6 +4,7 @@
  */
 package edu.sfsu.evaluator.view.importer;
 
+import edu.sfsu.util.io.EntityReader;
 import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
 import edu.sfsu.evaluator.model.Entity;
@@ -48,7 +49,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
         {
             docComboBox.addItem(docName);
         }
-        populateVerComboBox();
+        populateVerComboBox(docNames.get(0));
     }
 
     public static void showImportDialog(EvaluatorViewModel viewModel,
@@ -60,6 +61,13 @@ public class ImportDialogSWING extends javax.swing.JDialog
         importDialog.setVisible(true);
     }
     
+    /**
+     * 
+     * @param viewModel
+     * @param controller
+     * @param docName
+     * @param verName 
+     */
     public static void showImportDialog(
             EvaluatorViewModel viewModel,EvaluatorController controller,
             String docName, String verName)
@@ -72,9 +80,9 @@ public class ImportDialogSWING extends javax.swing.JDialog
         importDialog.setVisible(true);
     }
 
-    private void populateVerComboBox()
+    private void populateVerComboBox(String docName)
     {
-        String docName = (String) docComboBox.getSelectedItem();
+        //String docName = (String) docComboBox.getSelectedItem();
         if (docName == null)
         {
             return;
@@ -98,7 +106,6 @@ public class ImportDialogSWING extends javax.swing.JDialog
     }
     
     public void reorderVerComboBox(String firstVerName) {
-        verComboBox.removeAllItems();
         String docName = (String) docComboBox.getSelectedItem();
         if (docName == null)
         {
@@ -114,7 +121,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
             for (String verName
                     : verNames)
             {
-                if (!verName.matches(firstVerName))
+                if (!(verName.compareTo(firstVerName) == 0))
                     verComboBox.addItem(verName);
             }
         } catch (Exception e)
@@ -124,7 +131,7 @@ public class ImportDialogSWING extends javax.swing.JDialog
     }
     
     public void reorderDocComboBox(String firstDocName) {
-        //docComboBox.removeAllItems();
+        docComboBox.removeAllItems();
         ArrayList<String> docNames =
                 new ArrayList(viewModel.getAvailableDocuments());
         Collections.sort(docNames);
@@ -132,9 +139,11 @@ public class ImportDialogSWING extends javax.swing.JDialog
         for (String docName
                 : docNames)
         {
-            if (!docName.matches(firstDocName))
-                docComboBox.addItem(docName);
+            if (!(docName.compareTo(firstDocName) == 0))
+                docComboBox.addItem(docName);                
         }
+        
+        docComboBox.addActionListener(docComboBox);
     }
 
     /**
@@ -322,12 +331,16 @@ public class ImportDialogSWING extends javax.swing.JDialog
 
     private void docComboBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_docComboBoxActionPerformed
     {//GEN-HEADEREND:event_docComboBoxActionPerformed
-        String docName = (String) docComboBox.getSelectedItem();
-        if (docName.compareTo(lastDocSelected) != 0)
-        {
-            lastDocSelected = docName;
-            populateVerComboBox();
+        if (docComboBox.getSelectedItem() != null) {
+            String docName = (String) docComboBox.getSelectedItem(); 
+            
+            if (docName.compareTo(lastDocSelected) != 0)
+            {
+                lastDocSelected = docName;
+                populateVerComboBox(docName);
+            }
         }
+    
     }//GEN-LAST:event_docComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseButton;

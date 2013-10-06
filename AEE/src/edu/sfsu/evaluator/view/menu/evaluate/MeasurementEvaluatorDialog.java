@@ -90,7 +90,7 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
         docComboBox.addItem(firstDocName);
         for (String docName : docNames)
         {
-            if (!docName.matches(firstDocName))
+            if (!(docName.compareTo(firstDocName) == 0))
                 docComboBox.addItem(docName);
         }
         docComboBox.repaint();
