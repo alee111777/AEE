@@ -445,6 +445,18 @@ public class EvaluatorCorpusTree extends JTree implements EvaluatorView
                 }
             });
             this.add(importMenuItem);
+            
+            // Set as BaseLine menu item
+            JMenuItem setBaseLineMenuItem = new JMenuItem("Set As BaseLine");
+            setBaseLineMenuItem.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    controller.requestSetBaseLine(docName, verName);
+                }
+            });
+            this.add(setBaseLineMenuItem);
 
             // Stop automatic tree selection on popup display
             this.addPopupMenuListener(new PopupMenuListener()

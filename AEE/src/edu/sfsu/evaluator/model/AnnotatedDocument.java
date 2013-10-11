@@ -4,6 +4,7 @@
  */
 package edu.sfsu.evaluator.model;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,13 +37,24 @@ public class AnnotatedDocument implements java.io.Serializable
         return documentText;
     }
     
-//    public String getBaseLine() {
-//        return baseLineVersion;
-//    }
-//    
-//    public void setBaseLine(String version) {
-//        baseLineVersion = version;
-//    }
+    public AnnotatedDocumentVersion getBaseLineVersion() {
+        return versions.get(baseLineVersion);
+    }
+    
+    public void setBaseLine(String version) {
+        baseLineVersion = version;
+    }
+    
+    public ArrayList<AnnotatedDocumentVersion> getVersions() {
+        ArrayList<AnnotatedDocumentVersion> out;
+        out = new ArrayList<AnnotatedDocumentVersion>();
+        
+        for (String key : versions.keySet()) {
+            out.add(versions.get(key));
+        }
+        
+        return out;
+    }
 
     /**
      * Creates a version of this document. Returns true if successful.

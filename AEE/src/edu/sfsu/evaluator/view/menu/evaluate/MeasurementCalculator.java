@@ -55,6 +55,7 @@ public class MeasurementCalculator
         for (Entity testEntity : testEntities)
         {
             boolean isFP = true; // Is false positive
+            boolean isFN = true; // Is false negative
             for (Entity truthEntity : truthEntities)
             {
                 if (truthEntity.equals(testEntity))

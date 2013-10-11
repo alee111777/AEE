@@ -809,6 +809,10 @@ public class EvaluatorController
     public void requestImport(String docName, String verName) {
         evaluatorMenu.buttonPressedFileImport(docName, verName);
     }
+    
+    public void requestSetBaseLine(String docName, String verName) {
+        evaluatorModel.requestSetBaseLine(docName, verName);
+    }
 
     /**
      * Set preference for text screen.

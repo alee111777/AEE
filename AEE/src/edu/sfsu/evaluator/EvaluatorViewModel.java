@@ -5,6 +5,7 @@
 package edu.sfsu.evaluator;
 
 import edu.sfsu.evaluator.exceptions.BadModelRequestException;
+import edu.sfsu.evaluator.model.AnnotatedDocument;
 import edu.sfsu.evaluator.model.Entity;
 import edu.sfsu.evaluator.model.ComplexEntity;
 import edu.sfsu.evaluator.model.ComplexEntityRule;
@@ -271,5 +272,9 @@ public class EvaluatorViewModel
         {
             unHighlightedEntityRules.add(complexEntityType);
         }
+    }
+    
+    public ArrayList<AnnotatedDocument> getDocs() {
+        return model.getDocs();
     }
 }

@@ -6,9 +6,12 @@ package edu.sfsu.evaluator.view.menu;
 
 import edu.sfsu.evaluator.EvaluatorController;
 import edu.sfsu.evaluator.EvaluatorViewModel;
+import edu.sfsu.evaluator.model.AnnotatedDocument;
 import edu.sfsu.evaluator.view.importer.ImportDialogSWING;
 import edu.sfsu.evaluator.view.menu.add.AddEntityTypeDialog;
 import edu.sfsu.evaluator.view.menu.add.CreateComplexEntityRuleDialog;
+import edu.sfsu.evaluator.view.menu.evaluate.CorpusMeasurementsCalculator;
+import edu.sfsu.evaluator.view.menu.evaluate.CorpusMeasurementsJFrame;
 import edu.sfsu.evaluator.view.menu.evaluate.EntityTypeEvaluator;
 import edu.sfsu.evaluator.view.menu.evaluate.MeasurementEvaluatorDialog;
 import edu.sfsu.evaluator.view.menu.multiedit.MultiEditorDialog;
@@ -16,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -210,6 +214,18 @@ public class EvaluatorMenu extends JMenuBar
             }
         });
         evaluateMenu.add(measurementsMenuItem);
+        
+        // Evaluate --> Measurements
+        JMenuItem corpusMeasurementsMenuItem = new JMenuItem("Corpus Measurements");
+        corpusMeasurementsMenuItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                buttonPressedEvaluateCorpusMeasurements();
+            }
+        });
+        evaluateMenu.add(corpusMeasurementsMenuItem);
 
         // Evaluate --> Label Info
         JMenuItem labelInfoMenuItem = new JMenuItem("Label Info");
@@ -540,5 +556,23 @@ public class EvaluatorMenu extends JMenuBar
         }
         // Display multi editor
         MultiEditorDialog.showMultiEditorDialog(viewModel, controller);
+    }
+    
+    public void buttonPressedEvaluateCorpusMeasurements() {
+        if (!viewModel.isModelSet())
+        {
+            controller.showWarningMessage(EvaluatorViewModel.MODEL_NOT_SET);
+            return;
+        }
+        // Display corpus measurements table
+        CorpusMeasurementsCalculator calc = 
+                new CorpusMeasurementsCalculator();
+        
+        ArrayList<AnnotatedDocument> docs;
+        docs = viewModel.getDocs();
+        calc.calculate(docs);
+        
+        String measurements = calc.getMeasurements();
+        CorpusMeasurementsJFrame.showCorpusMeasurementsJFram(measurements);
     }
 }

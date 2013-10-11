@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * The evaluator model contains all information in the dataspace. This includes
@@ -42,7 +43,7 @@ public class EvaluatorModel
     private final String DOCUMENTS_SER = "documents.ser";
     private final String ENTITY_TYPE_SER = "entity_type.ser";
     private final String ENTITIES_SER = "entities.ser";
-
+    
     /**
      * The EvaluatorModel is unique to a workspace. This means that it is always
      * passed a workspace path from which to operate.
@@ -755,5 +756,20 @@ public class EvaluatorModel
         {
             System.err.println("Could not save entity rules");
         }
+    }
+    
+    public void requestSetBaseLine(String docName, String verName) {
+        documents.get(docName).setBaseLine(verName);
+    }
+    
+    public ArrayList<AnnotatedDocument> getDocs() {
+        ArrayList<AnnotatedDocument> docs;
+        docs = new ArrayList<AnnotatedDocument>();
+        Set<String> docNames = documents.keySet();
+        for (String docName : docNames) {
+            docs.add(documents.get(docName));
+        }
+        
+        return docs;
     }
 }
