@@ -19,6 +19,7 @@ public class AnnotatedDocument implements java.io.Serializable
     private String documentText;
     // Annotation versions
     private HashMap<String, AnnotatedDocumentVersion> versions;
+    private String baseLineVersion;
 
     public AnnotatedDocument(String documentText)
     {
@@ -34,6 +35,14 @@ public class AnnotatedDocument implements java.io.Serializable
     {
         return documentText;
     }
+    
+//    public String getBaseLine() {
+//        return baseLineVersion;
+//    }
+//    
+//    public void setBaseLine(String version) {
+//        baseLineVersion = version;
+//    }
 
     /**
      * Creates a version of this document. Returns true if successful.
