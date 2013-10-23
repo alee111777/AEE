@@ -515,7 +515,7 @@ public class EvaluatorModel
             throws BadModelRequestException
     {
         checkDocument(docName, false);
-        documents.put(docName, new AnnotatedDocument(docText));
+        documents.put(docName, new AnnotatedDocument(docName, docText));
     }
 
     /**

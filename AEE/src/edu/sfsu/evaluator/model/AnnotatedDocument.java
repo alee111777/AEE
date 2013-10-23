@@ -4,7 +4,6 @@
  */
 package edu.sfsu.evaluator.model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,15 +15,17 @@ import java.util.HashMap;
 public class AnnotatedDocument implements java.io.Serializable
 {
 
+    private String docName;
     // Labels associated with every document version.
     private String documentText;
     // Annotation versions
     private HashMap<String, AnnotatedDocumentVersion> versions;
     private String baseLineVersion;
 
-    public AnnotatedDocument(String documentText)
+    public AnnotatedDocument(String newDocName, String newDocText)
     {
-        this.documentText = documentText;
+        documentText = newDocText;
+        docName = newDocName;
         versions = new HashMap();
     }
 
@@ -36,6 +37,8 @@ public class AnnotatedDocument implements java.io.Serializable
     {
         return documentText;
     }
+    
+    public String getDocName() { return docName; }
     
     public AnnotatedDocumentVersion getBaseLineVersion() {
         return versions.get(baseLineVersion);

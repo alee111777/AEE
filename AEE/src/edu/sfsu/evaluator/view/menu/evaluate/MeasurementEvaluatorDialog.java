@@ -275,14 +275,16 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
             return;
         }
         // Launch the measurement table dialog
+        this.dispose();
         MeasurementTableDialog.showMeasurementTableDialog(viewModel, controller,
-                                                          nameOfSelectedDoc, verName);
+                                                          nameOfSelectedDoc, verName);     
     }//GEN-LAST:event_calculateButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cancelButtonActionPerformed
     {//GEN-HEADEREND:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calculateButton;
     private javax.swing.JButton cancelButton;
