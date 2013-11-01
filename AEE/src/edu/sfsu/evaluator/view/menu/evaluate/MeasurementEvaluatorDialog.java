@@ -276,8 +276,14 @@ public class MeasurementEvaluatorDialog extends javax.swing.JDialog
         }
         // Launch the measurement table dialog
         this.dispose();
-        MeasurementTableDialog.showMeasurementTableDialog(viewModel, controller,
-                                                          nameOfSelectedDoc, verName);     
+        //MeasurementTableDialog.showMeasurementTableDialog(viewModel, controller,
+          //                                                nameOfSelectedDoc, verName);
+         
+        try {
+            new NewMeasurementTable(viewModel, nameOfSelectedDoc, verName);
+        } catch (Exception e) {
+        
+        }
     }//GEN-LAST:event_calculateButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cancelButtonActionPerformed

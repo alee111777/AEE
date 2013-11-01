@@ -36,7 +36,6 @@ public class MeasurementTableDialog extends JDialog
         try
         {
             mt = new MeasurementTable(viewModel, docName, verName);
-            new NewMeasurementTable(viewModel, docName, verName);
         } catch (Exception e)
         {
             dispose();
