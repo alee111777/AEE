@@ -18,22 +18,22 @@ import javax.swing.table.TableCellRenderer;
 public class DocTableJDialog extends JDialog
 {
 
-    private Vector<Vector<String>> corpusData;
+    private Vector<Vector<String>> docData;
     private Vector<Vector<String>> mentionData;
     private Vector<String> mentionNameList;
     private JButton mentionDataButton;
     private boolean isMentionDataVisible;
-    private JTable corpusTable;
+    private JTable docTable;
     private JScrollPane scroll;
 
-    public DocTableJDialog(Vector<Vector<String>> newCorpusData,
+    public DocTableJDialog(Vector<Vector<String>> newdocData,
                               Vector<Vector<String>> newMentionData,
                               Vector<String> newMentionNameList)
     {
         super();
         this.setTitle("Document Evaluation Data");
         this.setLayout(new BorderLayout());
-        corpusData = newCorpusData;
+        docData = newdocData;
         mentionData = newMentionData;
         mentionNameList = newMentionNameList;
         mentionDataButton = new JButton();
@@ -58,8 +58,8 @@ public class DocTableJDialog extends JDialog
         columnNameList.add("Recall");
         columnNameList.add("F-Measure");
         
-        corpusTable = new JTable(corpusData, columnNameList);
-        corpusTable.setDefaultRenderer(Object.class, new TableCellRenderer()
+        docTable = new JTable(docData, columnNameList);
+        docTable.setDefaultRenderer(Object.class, new TableCellRenderer()
         {
             private DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 
@@ -84,7 +84,7 @@ public class DocTableJDialog extends JDialog
         });
         
         // Finish off gui
-        scroll = new JScrollPane(corpusTable);
+        scroll = new JScrollPane(docTable);
         getContentPane().add(scroll, BorderLayout.CENTER);
         setSize(600, 300);
         this.addWindowListener(new WindowAdapter()
@@ -101,8 +101,8 @@ public class DocTableJDialog extends JDialog
         getContentPane().add(mentionDataButton, BorderLayout.SOUTH);
         isMentionDataVisible = false;
         this.setVisible(true);
-        corpusTable.revalidate();
-        corpusTable.repaint();
+        docTable.revalidate();
+        docTable.repaint();
     }
 
     public void showMentionData()
@@ -120,8 +120,8 @@ public class DocTableJDialog extends JDialog
         }
 
         //merge corpus and mention data
-        Vector<Vector<String>> data = corpusData;
-        for (int rowNum = 0; rowNum < corpusData.size(); ++rowNum)
+        Vector<Vector<String>> data = docData;
+        for (int rowNum = 0; rowNum < docData.size(); ++rowNum)
         {
             for (int col = 0; col < mentionData.get(rowNum).size(); ++col)
             {
@@ -134,8 +134,8 @@ public class DocTableJDialog extends JDialog
 
 
         // Setup corpusTable
-        corpusTable = new JTable( /*dm, new GroupableTableColumnModel()*/);
-        corpusTable.setDefaultRenderer(Object.class, new TableCellRenderer()
+        docTable = new JTable( /*dm, new GroupableTableColumnModel()*/);
+        docTable.setDefaultRenderer(Object.class, new TableCellRenderer()
         {
             private DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 
@@ -159,13 +159,13 @@ public class DocTableJDialog extends JDialog
             }
         });
 
-        corpusTable.setColumnModel(new GroupableTableColumnModel());
-        corpusTable.setTableHeader(new GroupableTableHeader(
-                (GroupableTableColumnModel) corpusTable.getColumnModel()));
-        corpusTable.setModel(dm);
+        docTable.setColumnModel(new GroupableTableColumnModel());
+        docTable.setTableHeader(new GroupableTableHeader(
+                (GroupableTableColumnModel) docTable.getColumnModel()));
+        docTable.setModel(dm);
 
         //setup column groups
-        GroupableTableColumnModel cm = (GroupableTableColumnModel) corpusTable.
+        GroupableTableColumnModel cm = (GroupableTableColumnModel) docTable.
                 getColumnModel();
 
         int col = 4; //start nesting header at column 4 (the first "P")
@@ -183,7 +183,7 @@ public class DocTableJDialog extends JDialog
 
         }
 
-        GroupableTableHeader header = (GroupableTableHeader) corpusTable.
+        GroupableTableHeader header = (GroupableTableHeader) docTable.
                 getTableHeader();
         cm.addColumnGroup(g_type);
 
@@ -194,7 +194,7 @@ public class DocTableJDialog extends JDialog
         }
 
         // Finish off gui
-        scroll = new JScrollPane(corpusTable);
+        scroll = new JScrollPane(docTable);
         getContentPane().add(scroll, BorderLayout.CENTER);
         setSize(1000, 300);
         //this.repaint();
@@ -210,8 +210,8 @@ public class DocTableJDialog extends JDialog
         mentionDataButton.setText("Show Mention Data");
         getContentPane().add(mentionDataButton, BorderLayout.SOUTH);
         this.setVisible(true);
-        corpusTable.revalidate();
-        corpusTable.repaint();
+        docTable.revalidate();
+        docTable.repaint();
     }
 
     /**

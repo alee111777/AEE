@@ -12,6 +12,7 @@ import edu.sfsu.evaluator.view.menu.add.CreateComplexEntityRuleDialog;
 import edu.sfsu.evaluator.view.menu.evaluate.CorpusMeasurementsCalculator;
 import edu.sfsu.evaluator.view.menu.evaluate.EntityTypeEvaluator;
 import edu.sfsu.evaluator.view.menu.evaluate.MeasurementEvaluatorDialog;
+import edu.sfsu.evaluator.view.menu.evaluate.NewMeasurementTable;
 import edu.sfsu.evaluator.view.menu.evaluate.groupabletableheader.CorpusTableJDialog;
 import edu.sfsu.evaluator.view.menu.multiedit.MultiEditorDialog;
 import java.awt.event.ActionEvent;
@@ -528,6 +529,7 @@ public class EvaluatorMenu extends JMenuBar
         // Display measurements dialog
         MeasurementEvaluatorDialog.showMeasurementEvaluatorDialog(
                 viewModel, controller, docName);
+        
     }
 
     /**
