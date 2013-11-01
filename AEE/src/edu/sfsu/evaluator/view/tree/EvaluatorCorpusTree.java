@@ -353,7 +353,7 @@ public class EvaluatorCorpusTree extends JTree implements EvaluatorView
             this.add(deleteMenuItem);
             
             // calc menu item
-            JMenuItem calcMenuItem = new JMenuItem("Calculate Precision");
+            JMenuItem calcMenuItem = new JMenuItem("Evaluate Document");
             calcMenuItem.addActionListener(new ActionListener()
             {
                 @Override

@@ -204,7 +204,7 @@ public class EvaluatorMenu extends JMenuBar
         this.add(evaluateMenu);
 
         // Evaluate --> Measurements
-        JMenuItem measurementsMenuItem = new JMenuItem("Measurements");
+        JMenuItem measurementsMenuItem = new JMenuItem("Document Evaluation");
         measurementsMenuItem.addActionListener(new ActionListener()
         {
             @Override
@@ -216,7 +216,7 @@ public class EvaluatorMenu extends JMenuBar
         evaluateMenu.add(measurementsMenuItem);
         
         // Evaluate --> Measurements
-        JMenuItem corpusMeasurementsMenuItem = new JMenuItem("Corpus Measurements");
+        JMenuItem corpusMeasurementsMenuItem = new JMenuItem("Corpus Evaluation");
         corpusMeasurementsMenuItem.addActionListener(new ActionListener()
         {
             @Override
